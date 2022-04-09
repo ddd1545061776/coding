@@ -1,0 +1,4 @@
+server:
+  servlet:
+    context-path: /coding-online/external
+  port: 6667

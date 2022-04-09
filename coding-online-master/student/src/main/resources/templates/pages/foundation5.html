@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>在线代码编辑器--Html/Markdown支持</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/jquery.splitter.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/lib/codemirror.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/theme/github-markdown.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/addon/display/fullscreen.css}">
+    <link th:href="@{/assets/css/vs.min.css}" rel="stylesheet">
+
+    <script th:src="@{/assets/js/jquery.min.js}"></script>
+    <script th:src="@{/assets/js/jquery.splitter.js}"></script>
+    <script th:src="@{/assets/lib/codemirror.js}"></script>
+    <script th:src="@{/assets/mode/javascript/javascript.js}"></script>
+    <script th:src="@{/assets/mode/css/css.js}"></script>
+    <script th:src="@{/assets/mode/xml/xml.js}"></script>
+    <script th:src="@{/assets/mode/markdown/markdown.js}"></script>
+    <script th:src="@{/assets/mode/htmlmixed/htmlmixed.js}"></script>
+    <script th:src="@{/assets/addon/selection/active-line.js}"></script>
+    <script th:src="@{/assets/addon/display/fullscreen.js}"></script>
+    <script th:src="@{/assets/js/emmet.js}"></script>
+    <script th:src="@{/assets/js/marked.min.js}"></script>
+    <script th:src="@{/assets/js/highlight.min.js}"></script>
+
+    <style>
+        * {
+            padding:0;
+            margin:0;
+        }
+        body {
+            font-size: 14px;
+            background: rgb(247, 247, 247);
+        }
+        header {
+            line-height:39px;
+            background: rgb(237, 237, 237);
+            border-bottom: hsl(0, 0%, 75%) solid 1px;
+            text-align: center;
+            height: 39px;
+            position: relative;
+        }
+        .logo {
+            position: absolute;
+            margin-left:10px;
+            background-color: #777;
+            background-image:
+                    linear-gradient(
+                            45deg,
+                            transparent 45%,
+                            hsla(48,20%,90%,1) 45%,
+                            hsla(48,20%,90%,1) 55%,
+                            transparent 0
+                    );
+            background-size: .05em .05em;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            -webkit-text-stroke: 1px #444;
+            font-size: 24px;
+            font-weight: 800;
+        }
+        header .tab {
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 28px;
+            line-height: 28px;
+            margin-top: 5px;
+            background: #fff;
+            height: 28px;
+            overflow: hidden;
+        }
+        header span {
+            display: inline-block;
+            font-size: 14px;
+            text-align: center;
+            width:100px;
+            line-height: 28px;
+            cursor: pointer;
+        }
+        header span.on {
+            background-color: hsl(215, 100%, 96%);
+        }
+        header .tips {
+            position: absolute;
+            right:10px;
+            top:0;
+            text-align: right;
+            color:#aaa;
+            font-size:12px;
+            text-shadow: 1px 1px 1px #fff;
+        }
+        header .contorl a {
+            border: 1px solid rgba(27,31,35,.2);
+            border-radius: .25em;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 12px;
+            line-height: 14px;
+            padding: 4px 8px;
+            position: relative;
+            white-space: nowrap;
+            background-color: #eff3f6;
+            color: #24292e;
+            text-decoration: none;
+        }
+        header .contorl a:hover {
+            background-color: #e6ebf1;
+            border-color: rgba(27,31,35,.35);
+        }
+        .preview {
+            border: none;
+            height: 100%;
+            background: white;
+            overflow-y: auto;
+            box-sizing: border-box;
+            padding:10px;
+            width: 100%;
+        }
+        #preview {
+            padding:0px;
+        }
+        .editbox {
+            height: 100%;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+        .CodeMirror {
+            height:auto;
+            background: rgb(247, 247, 247);
+        }
+        .splitter_panel .vsplitter {
+            width: 1px;
+            background: transparent;
+            border-left:1px solid #ccc;
+            z-index: 8;
+        }
+        .splitter_panel .vsplitter:hover {
+            border-left:1px dashed gray;
+        }
+        .marked{
+            padding: 0.2em;
+            margin: 0;
+            background-color: #eceae6;
+            border-radius: 3px;
+            font-weight: bold;
+            font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="logo">
+        EditOnline
+    </div>
+    <div class="tab">
+        <span class="on">HTML</span><span>教程</span>
+    </div>
+    <div class="tips">Editing, Press F11 to Switch FullScreen</div>
+</header>
+
+<div class="container" id="content">
+    <div class="edit-view">
+        <div class="editbox">
+            <!--html内容-->
+            <textarea id="htmlEdit">
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Foundation 实例</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.staticfile.org/foundation/5.5.3/css/foundation.min.css">
+  <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+  <script src="https://cdn.staticfile.org/foundation/5.5.3/js/foundation.min.js"></script>
+  <script src="https://cdn.staticfile.org/foundation/5.5.3/js/vendor/modernizr.js"></script>
+</head>
+<body>
+
+<div style="padding:20px;">
+  <h2>下拉菜单按钮</h2>
+  <a href="#" data-dropdown="id01" class="button dropdown">Dropdown Button</a>
+  <ul id="id01" data-dropdown-content class="f-dropdown">
+    <li><a href="#">Link 1</a></li>
+    <li><a href="#">Link 2</a></li>
+    <li><a href="#">Link 3</a></li>
+  </ul>
+</div>
+
+<!-- 初始化 Foundation JS -->
+<script>
+$(document).ready(function() {
+    $(document).foundation();
+})
+</script>
+
+</body>
+</html>
+
+
+
+        </textarea>
+            <!--html内容-->
+        </div>
+        <!--Markdown内容-->
+        <div class="editbox" style="display: none;">
+        <textarea id="MarkdownEdit"><h1>Foundation5 教程</h1>
+            <div class="tutintro"><img src="//www.runoob.com/wp-content/uploads/2015/11/foundation-starter@128.png">
+
+<p>
+Foundation 用于开发响应式的 HTML, CSS and JavaScript 框架。</p><p>
+Foundation 是一个易用、强大而且灵活的框架,用于构建基于任何设备上的 Web 应用。
+</p>
+<p>Foundation 是一个以移动优先的流行框架。</p>
+</div>
+            <hr>
+       <h1>Foundation 起步</h1>
+            <hr>
+            <h2>什么是 Foundation？</h2>
+            <ul>
+  <li>Foundation 是一个免费的前端框架，用于快速开发。</li>
+  <li>Foundation 包含了 HTML 和 CSS 的设计模板，提供多种 Web 上的 UI 组件，如表单、按钮、Tabs 等等。同时也提供了多种 JavaScript 插件。</li>
+  <li>Foundation 移动优先，可创建响应式网页。</li>
+  <li>Foundation 适用于初学者和专业人士。</li>
+  <li>Foundation 已使用在 Facebook, eBay, Samsung, Amazon, Disney等。</li>
+</ul>
+            <br>
+            <table class="lamp"><tbody><tr>
+<th style="width:50px"><img src="lamp.jpg" alt="Note" style="height:32px;width:100px"></th>
+<td><b>什么是响应式网页设计？<br></b><br>
+响应式Web设计(Responsive Web design)的理念是：
+页面的设计与开发应当根据用户行为以及设备环境(系统平台、屏幕尺寸、屏幕定向等)进行相应的响应和调整。</td>
+</tr></tbody></table>
+            <hr>
+            <h2>从哪里下载 Foundation?</h2>
+            <p>你可以通过以下两种方式来获取 Foundation：</p>
+            <p>1、从官网下载最新版本：<a target="_blank" href="http://foundation.zurb.com/">http://foundation.zurb.com/</a>。</p>
+            <p>2、使用菜鸟教程官网提供的CDN（推荐）：</p>
+
+```
+            <!-- css 文件 -->
+<link rel="stylesheet" href="http://cdn.static.runoob.com/libs/foundation/5.5.3/css/foundation.min.css">
+
+            <!-- jQuery 库 -->
+<script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+
+            <!-- JavaScript 文件 -->
+<script src="http://cdn.static.runoob.com/libs/foundation/5.5.3/js/foundation.min.js"></script>
+
+            <!-- modernizr.js 文件 -->
+<script src="http://cdn.static.runoob.com/libs/foundation/5.5.3/js/vendor/modernizr.js"></script>
+
+```
+
+            <p>本站静态 CDN 基于阿里云服务。</p>
+            <table class="lamp"><tbody><tr>
+<th style="width:50px"><img src="lamp.jpg" alt="Note" style="height:32px;width:32px"></th>
+<td><b>Foundation 使用 CDN 的优势:</b><br>
+Foundation 使用 CDN 提高了企业站点(尤其含有大量图片和静态页面站点)的访问速度，并大大提高以上性质站点的稳定性<br>
+<br><strong>为什么使用 modernizr?</strong><br>Some
+Foundation 的组件使用了比较前前沿的 HTML5 和 CSS3 特性，但不是所有浏览器都支持。 Modernizr 是一个用于检测用户浏览器HTML5和CSS3特性的JavaScript库 - 让组件能在所有浏览器上正常运行。</td>
+</tr></tbody></table>
+<h2>使用 Foundation 创建页面</h2>
+            <p><strong>1. 添加 HTML5 doctype</strong></p>
+            <p>Foundation 使用 HTML 元素和 CSS 属性，所以需要添加 HTML5 doctype 文档类型声明。</p>
+            <p>同时我们可以设置文档的语言属性 lang 及字符编码：</p>
+
+```
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8">
+  </head>
+</html>
+
+```
+<p><strong>2. Foundation 5 移动优先</strong></p>
+<p>Foundation 5 为移动设备的响应式设计。框架的核心是移动优先。</p>
+<p>为了确保页面可自由缩放可以在 <code>&lt;head&gt;</code> 元素中添加以下 <code>&lt;meta&gt;</code> 标签:</p>
+
+```
+
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+
+```
+<ul>
+<li>width：控制 viewport 的大小，可以指定的一个值，如果 600，或者特殊的值，如 device-width 为设备的宽度（单位为缩放为 100% 时的 CSS 的像素）。</li><li>
+
+initial-scale：初始缩放比例，也即是当页面第一次 load 的时候缩放比例。</li></ul>
+            <p><strong>3. 初始化组件</strong></p>
+            <p>一些 Foundation 组件是基于 jQuery 开发的，如：模态框、下拉菜单等。你可以使用以下脚本来初始化组件：</p>
+
+```
+<script>
+$(document).ready(function() {
+    $(document).foundation();
+})
+</script>
+
+```
+<h1>
+            <a href="https://www.runoob.com/foundation/foundation-tutorial.html">查看更多教程</a>
+          </h1>
+        </textarea>
+            <!--Markdown内容-->
+        </div>
+    </div>
+    <div class="result-view">
+        <iframe id="preview" class="preview"></iframe>
+        <div id="mkview" class="preview markdown-body" style="display: none;"></div>
+    </div>
+</div>
+
+
+<script>
+    let cHeight = document.documentElement.clientHeight - 40;
+    let splitter = $('#content').height(cHeight).split({
+        orientation: 'vertical',
+        limit: 100,
+        position: '30%'
+    });
+
+
+    var night = false;
+    var dom = document.getElementById('preview');
+    var editor = CodeMirror.fromTextArea(document.getElementById("htmlEdit"), {
+        lineNumbers: true,
+        mode: "htmlmixed",
+        indentUnit: 2,
+        lineWrapping:true,
+        styleActiveLine: true
+    });
+
+    // emmetCodeMirror(editor);
+
+    editor.on("keyup", function() {
+        runPreview()
+    });
+
+    var editorMark = CodeMirror.fromTextArea(document.getElementById("MarkdownEdit"), {
+        lineNumbers: false,
+        mode: "markdown",
+        indentUnit: 2,
+        lineWrapping:true,
+        styleActiveLine: true
+    });
+
+    editorMark.on("keyup", function() {
+        runMkview()
+    });
+
+    editor.setOption("extraKeys", {
+        "F11": function(cm) {
+            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+        },
+        "Esc": function(cm) {
+            if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+        }
+    });
+
+    editorMark.setOption("extraKeys", {
+        "F11": function(cm) {
+            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+        },
+        "Esc": function(cm) {
+            if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+        }
+    });
+
+    runPreview();
+    runMkview();
+    tab();
+
+    marked.setOptions({
+        highlight: function (code, lang) {
+            return hljs.highlightAuto(code).value;
+        }
+    });
+
+    function runPreview(){
+        dom.contentWindow.document.open();
+        dom.contentWindow.document.write(editor.getValue());
+        dom.contentWindow.document.close();
+    }
+
+    function runMkview(){
+        document.getElementById('mkview').innerHTML = marked(editorMark.getValue());
+    }
+
+    function tab(){
+        var head = document.getElementsByTagName('header');
+        var btns = head[0].getElementsByTagName('span');
+        var boxs = document.getElementsByClassName('editbox');
+        var views = document.getElementsByClassName('preview');
+        for(var i=0;i<btns.length;i++){
+            var btn = btns[i];
+            btn.index = i;
+            btn.onclick = function(){
+                for(var j=0;j<btns.length;j++){
+                    btns[j].className = '';
+                }
+                this.className = 'on';
+                for(var k = 0;k<boxs.length;k++){
+                    boxs[k].style.display = 'none';
+                }
+                boxs[this.index].style.display = 'block';
+                for(var h = 0;h<views.length;h++){
+                    views[h].style.display = 'none';
+                }
+                views[this.index].style.display = 'block';
+                //
+                // editor.refresh();
+                // editorMark.refresh();
+            }
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>在线代码编辑器--Html/Markdown支持</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/jquery.splitter.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/lib/codemirror.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/theme/github-markdown.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/addon/display/fullscreen.css}">
+    <link th:href="@{/assets/css/vs.min.css}" rel="stylesheet">
+
+    <script th:src="@{/assets/js/jquery.min.js}"></script>
+    <script th:src="@{/assets/js/jquery.splitter.js}"></script>
+    <script th:src="@{/assets/lib/codemirror.js}"></script>
+    <script th:src="@{/assets/mode/javascript/javascript.js}"></script>
+    <script th:src="@{/assets/mode/css/css.js}"></script>
+    <script th:src="@{/assets/mode/xml/xml.js}"></script>
+    <script th:src="@{/assets/mode/markdown/markdown.js}"></script>
+    <script th:src="@{/assets/mode/htmlmixed/htmlmixed.js}"></script>
+    <script th:src="@{/assets/addon/selection/active-line.js}"></script>
+    <script th:src="@{/assets/addon/display/fullscreen.js}"></script>
+    <script th:src="@{/assets/js/emmet.js}"></script>
+    <script th:src="@{/assets/js/marked.min.js}"></script>
+    <script th:src="@{/assets/js/highlight.min.js}"></script>
+
+    <style>
+        * {
+            padding:0;
+            margin:0;
+        }
+        body {
+            font-size: 14px;
+            background: rgb(247, 247, 247);
+        }
+        header {
+            line-height:39px;
+            background: rgb(237, 237, 237);
+            border-bottom: hsl(0, 0%, 75%) solid 1px;
+            text-align: center;
+            height: 39px;
+            position: relative;
+        }
+        .logo {
+            position: absolute;
+            margin-left:10px;
+            background-color: #777;
+            background-image:
+                    linear-gradient(
+                            45deg,
+                            transparent 45%,
+                            hsla(48,20%,90%,1) 45%,
+                            hsla(48,20%,90%,1) 55%,
+                            transparent 0
+                    );
+            background-size: .05em .05em;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            -webkit-text-stroke: 1px #444;
+            font-size: 24px;
+            font-weight: 800;
+        }
+        header .tab {
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 28px;
+            line-height: 28px;
+            margin-top: 5px;
+            background: #fff;
+            height: 28px;
+            overflow: hidden;
+        }
+        header span {
+            display: inline-block;
+            font-size: 14px;
+            text-align: center;
+            width:100px;
+            line-height: 28px;
+            cursor: pointer;
+        }
+        header span.on {
+            background-color: hsl(215, 100%, 96%);
+        }
+        header .tips {
+            position: absolute;
+            right:10px;
+            top:0;
+            text-align: right;
+            color:#aaa;
+            font-size:12px;
+            text-shadow: 1px 1px 1px #fff;
+        }
+        header .contorl a {
+            border: 1px solid rgba(27,31,35,.2);
+            border-radius: .25em;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 12px;
+            line-height: 14px;
+            padding: 4px 8px;
+            position: relative;
+            white-space: nowrap;
+            background-color: #eff3f6;
+            color: #24292e;
+            text-decoration: none;
+        }
+        header .contorl a:hover {
+            background-color: #e6ebf1;
+            border-color: rgba(27,31,35,.35);
+        }
+        .preview {
+            border: none;
+            height: 100%;
+            background: white;
+            overflow-y: auto;
+            box-sizing: border-box;
+            padding:10px;
+            width: 100%;
+        }
+        #preview {
+            padding:0px;
+        }
+        .editbox {
+            height: 100%;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+        .CodeMirror {
+            height:auto;
+            background: rgb(247, 247, 247);
+        }
+        .splitter_panel .vsplitter {
+            width: 1px;
+            background: transparent;
+            border-left:1px solid #ccc;
+            z-index: 8;
+        }
+        .splitter_panel .vsplitter:hover {
+            border-left:1px dashed gray;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="logo">
+        EditOnline
+    </div>
+    <div class="tab">
+        <span class="on">HTML</span><span>教程</span>
+    </div>
+    <div class="tips">Editing, Press F11 to Switch FullScreen</div>
+</header>
+
+<div class="container" id="content">
+    <div class="edit-view">
+        <div class="editbox">
+            <!--html内容-->
+            <textarea id="htmlEdit">
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bootstrap 实例</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+  <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <div class="jumbotron">
+    <h1>我的第一个 Bootstrap3 页面</h1>
+    <p>重置窗口大小，查看响应式效果！</p>
+  </div>
+  <div class="row">
+    <div class="col-sm-4">
+      <h3>第一列</h3>
+      <p>学的不仅是技术，更是梦想！</p>
+      <p>再牛逼的梦想,也抵不住你傻逼似的坚持！</p>
+    </div>
+    <div class="col-sm-4">
+      <h3>第二列</h3>
+      <p>学的不仅是技术，更是梦想！</p>
+      <p>再牛逼的梦想,也抵不住你傻逼似的坚持！</p>
+    </div>
+    <div class="col-sm-4">
+      <h3>第三列</h3>
+      <p>学的不仅是技术，更是梦想！</p>
+      <p>再牛逼的梦想,也抵不住你傻逼似的坚持！</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
+
+
+        </textarea>
+            <!--html内容-->
+        </div>
+        <!--Markdown内容-->
+        <div class="editbox" style="display: none;">
+        <textarea id="MarkdownEdit"><h1>Bootstrap <span class="color_h1">教程</span></h1>
+            <div class="tutintro">
+<img src="//www.runoob.com/wp-content/uploads/2013/10/bs.png" alt="Bootstrap 教程" width="128" height="128" class="alignnone size-full wp-image-9729">
+<p>Bootstrap，来自 Twitter，是目前最受欢迎的前端框架。Bootstrap 是基于 HTML、CSS、JAVASCRIPT 的，它简洁灵活，使得 Web 开发更加快捷。</p>
+<p>本教程将向您讲解 Bootstrap 框架的基础，通过学习这些内容，您将可以轻松地创建 Web 项目。教程被分为 Bootstrap 基本结构、Bootstrap CSS、Bootstrap 布局组件和 Bootstrap 插件几个部分。每个部分都包含了与该主题相关的简单有用的实例。</p>
+</div>
+            <h2 class="tutheader">谁适合阅读本教程？</h2>
+            <p>只要您具备 HTML 和 CSS 的基础知识，您就可以阅读本教程，进而开发出自己的网站。在您学习完本教程后，您即可达到使用 Bootstrap 开发 Web 项目的中等水平。</p>
+            <h2 class="tutheader">阅读本教程前，您需要了解的知识：</h2>
+            <p>在您开始阅读本教程之前，您必须具备 HTML 、 CSS 和 JavaScript 的基础知识。如果您还不了解这些概念，那么建议您先阅读我们的这些教程:
+</p>
+            <ul>
+<li>HTML 教程 </li>
+<li>CSS 教程</li>
+<li>JavaScript 教程</li>
+</ul>
+            <h1>Bootstrap <span class="color_h1">环境安装</span></h1>
+            <p>Bootstrap 安装是非常容易的。本章将讲解如何下载并安装 Bootstrap，讨论 Bootstrap 文件结构，并通过一个实例演示它的用法。</p>
+            <h2 class="tutheader">下载 Bootstrap</h2>
+            <p>您可以从 <a target="_blank" rel="nofollow" href="http://getbootstrap.com/">http://getbootstrap.com/</a> 上下载 Bootstrap 的最新版本。当您点击这个链接时，您将看到如下所示的网页：</p>
+            <img src="bootstrapdowloadscreen.jpg" alt="Bootstrap 下载">
+            <p>您会看到两个按钮：</p>
+            <ul class="list">
+<li><i>Download Bootstrap</i>：下载 Bootstrap。点击该按钮，您可以下载 Bootstrap CSS、JavaScript 和字体的预编译的压缩版本。不包含文档和最初的源代码文件。</li>
+<li><i>Download Source</i>：下载源代码。点击该按钮，您可以直接从 from 上得到最新的 Bootstrap LESS 和 JavaScript 源代码。</li>
+</ul>
+            <p>如果您使用的是未编译的源代码，您需要编译 LESS 文件来生成可重用的 CSS 文件。对于编译 LESS 文件，Bootstrap 官方只支持 <a target="_blank" rel="nofollow" href="http://twitter.github.io/recess/">Recess</a>，这是 Twitter 的基于 <a target="_blank" rel="nofollow" href="http://lesscss.org/">less.js</a> 的 CSS 提示。</p>
+            <p>为了更好的了解和更方便的使用，我们将在本教程中使用 Bootstrap 的预编译版本。</p>
+            <p>由于文件是被编译过和压缩过的，在独立的功能开发中，您不必每次都包含这些独立的文件。
+</p>
+            <p>本教程编写时，使用的是最新版（Bootstrap 3）。</p>
+            <h2 class="tutheader">文件结构</h2>
+            <h3>预编译的 Bootstrap</h3>
+            <p>当您下载了 Bootstrap 的已编译的版本，解压缩 ZIP 文件，您将看到下面的文件/目录结构：</p>
+            <img src="compiledfilestructure.jpg" alt="已编译的 Bootstrap 文件结构">
+            <p>如上图所示，可以看到已编译的 CSS 和 JS（bootstrap.*），以及已编译压缩的 CSS 和 JS（bootstrap.min.*）。同时也包含了 Glyphicons 的字体，这是一个可选的 Bootstrap 主题。</p>
+            <h3>Bootstrap 源代码</h3>
+            <p>如果您下载了 Bootstrap 源代码，那么文件结构将如下所示：</p>
+            <img src="sourcecodefilestructure.jpg" alt="Bootstrap 源代码结构">
+            <ul class="list">
+<li><i>less/</i>、<i>js/</i> 和 <i>fonts/</i> 下的文件分别是 Bootstrap CSS、JS 和图标字体的源代码。</li>
+<li><i>dist/</i> 文件夹包含了上面预编译下载部分中所列的文件和文件夹。</li>
+<li><i>docs-assets/</i>、<i>examples/</i> 和所有的 <i>*.html</i> 文件是 Bootstrap 文档。</li>
+</ul>
+            <h1>
+            <a href="https://www.runoob.com/bootstrap/bootstrap-tutorial.html">查看更多教程</a>
+          </h1>
+        </textarea>
+            <!--Markdown内容-->
+        </div>
+    </div>
+    <div class="result-view">
+        <iframe id="preview" class="preview"></iframe>
+        <div id="mkview" class="preview markdown-body" style="display: none;"></div>
+    </div>
+</div>
+
+
+<script>
+    let cHeight = document.documentElement.clientHeight - 40;
+    let splitter = $('#content').height(cHeight).split({
+        orientation: 'vertical',
+        limit: 100,
+        position: '30%'
+    });
+
+
+    var night = false;
+    var dom = document.getElementById('preview');
+    var editor = CodeMirror.fromTextArea(document.getElementById("htmlEdit"), {
+        lineNumbers: true,
+        mode: "htmlmixed",
+        indentUnit: 2,
+        lineWrapping:true,
+        styleActiveLine: true
+    });
+
+    // emmetCodeMirror(editor);
+
+    editor.on("keyup", function() {
+        runPreview()
+    });
+
+    var editorMark = CodeMirror.fromTextArea(document.getElementById("MarkdownEdit"), {
+        lineNumbers: false,
+        mode: "markdown",
+        indentUnit: 2,
+        lineWrapping:true,
+        styleActiveLine: true
+    });
+
+    editorMark.on("keyup", function() {
+        runMkview()
+    });
+
+    editor.setOption("extraKeys", {
+        "F11": function(cm) {
+            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+        },
+        "Esc": function(cm) {
+            if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+        }
+    });
+
+    editorMark.setOption("extraKeys", {
+        "F11": function(cm) {
+            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+        },
+        "Esc": function(cm) {
+            if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+        }
+    });
+
+    runPreview();
+    runMkview();
+    tab();
+
+    marked.setOptions({
+        highlight: function (code, lang) {
+            return hljs.highlightAuto(code).value;
+        }
+    });
+
+    function runPreview(){
+        dom.contentWindow.document.open();
+        dom.contentWindow.document.write(editor.getValue());
+        dom.contentWindow.document.close();
+    }
+
+    function runMkview(){
+        document.getElementById('mkview').innerHTML = marked(editorMark.getValue());
+    }
+
+    function tab(){
+        var head = document.getElementsByTagName('header');
+        var btns = head[0].getElementsByTagName('span');
+        var boxs = document.getElementsByClassName('editbox');
+        var views = document.getElementsByClassName('preview');
+        for(var i=0;i<btns.length;i++){
+            var btn = btns[i];
+            btn.index = i;
+            btn.onclick = function(){
+                for(var j=0;j<btns.length;j++){
+                    btns[j].className = '';
+                }
+                this.className = 'on';
+                for(var k = 0;k<boxs.length;k++){
+                    boxs[k].style.display = 'none';
+                }
+                boxs[this.index].style.display = 'block';
+                for(var h = 0;h<views.length;h++){
+                    views[h].style.display = 'none';
+                }
+                views[this.index].style.display = 'block';
+                //
+                // editor.refresh();
+                // editorMark.refresh();
+            }
+        }
+    }
+</script>
+</body>
+</html>

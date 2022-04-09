@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="common_head" id="topnav" class="header-bg">
+    <!-- Navigation Bar-->
+    <header>
+        <div class="topbar-main">
+            <div class="container-fluid">
+
+                <!-- Logo-->
+                <div>
+                    <a th:href="@{/index}" class="logo">
+                        <img th:src="@{/assets/images/logo2.png}" class="logo-lg" alt="" height="40">
+                    </a>
+                </div>
+                <!-- End Logo-->
+
+                <div class="menu-extras topbar-custom navbar p-0">
+
+                    <ul class="navbar-right ml-auto list-inline float-right mb-0">
+
+                        <!-- full screen -->
+                        <li class="dropdown notification-list list-inline-item d-none d-md-inline-block">
+                            <a class="nav-link waves-effect" href="#" id="btn-fullscreen">
+                                <i class="fas fa-expand noti-icon"></i>
+                            </a>
+                        </li>
+
+
+                        <li class="dropdown notification-list list-inline-item">
+                            <div class="dropdown notification-list nav-pro-img">
+                                <a class="dropdown-toggle nav-link arrow-none waves-effect nav-user" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                                    <img th:src="@{/assets/images/users/user-1.jpg}" alt="user" class="rounded-circle" id="user-img">
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right dropdown-menu-animated profile-dropdown">
+                                    <!-- item-->
+                                    <a class="dropdown-item" th:href="@{/pages-profile}"><i class="mdi mdi-account-circle"></i> 我的信息</a>
+                                    <a class="dropdown-item" th:href="@{/pages-lock}"><i class="mdi mdi-lock-open-outline"></i> 锁屏</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item text-danger" th:href="@{/logout}"><i class="mdi mdi-power text-danger"></i> 注销 </a>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li class="menu-item dropdown notification-list list-inline-item">
+                            <!-- Mobile menu toggle-->
+                            <a class="navbar-toggle nav-link">
+                                <div class="lines">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                            </a>
+                            <!-- End mobile menu toggle-->
+                        </li>
+
+                    </ul>
+
+                </div>
+                <!-- end menu-extras -->
+
+                <div class="clearfix"></div>
+
+            </div>
+            <!-- end container -->
+        </div>
+        <!-- end topbar-main -->
+
+        <!-- start content -->
+        <div class="bg-dark">
+            <div class="container-fluid">
+                <div class="row align-items-center ">
+                    <div class="col-md-8">
+                        <div class="page-title-box">
+                            <h4 id="current-user-name" th:text="${#request.getUserPrincipal().getName()}" class="page-title"></h4>
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item active">欢迎来到 coding online!</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="float-right d-none d-md-block app-datepicker">
+                            <input type="text" class="form-control" data-date-format="MM dd, yyyy" readonly="readonly" id="datepicker">
+                            <i class="mdi mdi-chevron-down mdi-drop"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row top-content">
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="row align-items-center p-1">
+                            <div class="col-lg-6">
+                                <h5 class="font-16 text-white">已完成题目数</h5>
+                                <h4 id="question-passed" class="text-info pt-1 mb-0">4</h4>
+                            </div>
+                            <div class="col-lg-6">
+                                <div id="chart1"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="row align-items-center p-1">
+                            <div class="col-lg-6">
+                                <h5 class="font-16 text-white">提交总次数</h5>
+                                <h4 id="submit-num" class="text-warning pt-1 mb-0">20</h4>
+                            </div>
+                            <div class="col-lg-6">
+                                <div id="chart2"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="row align-items-center p-1">
+                            <div class="col-lg-6">
+                                <h5 class="font-16 text-white">通过次数</h5>
+                                <h4 id="pass-num" class="text-primary pt-1 mb-0">6</h4>
+                            </div>
+                            <div class="col-lg-6">
+                                <div id="chart3"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-xl-3">
+
+                        <div class="row align-items-center p-1">
+                            <div class="col-lg-6">
+                                <h5 class="font-16 text-white">通过率排名</h5>
+                                <h4 id="pass-rate-order" class="text-danger pt-1 mb-0">1</h4>
+                            </div>
+                            <div class="col-lg-6">
+                                <div id="chart4"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end content -->
+
+        <!-- MENU Start -->
+        <div class="navbar-custom">
+            <div class="container-fluid">
+
+                <div id="navigation">
+
+                    <!-- Navigation Menu-->
+                    <ul class="navigation-menu">
+
+                        <li class="has-submenu">
+                            <a th:href="@{/index}"><i class="dripicons-meter"></i> 首页</a>
+                        </li>
+
+                        <li class="has-submenu">
+                            <a href="#"><i class="dripicons-briefcase"></i> 题库</a>
+                            <ul class="submenu" id="questionType">
+                            </ul>
+                        </li>
+
+                        <li class="has-submenu">
+                            <a th:href="@{/learncode.html}"><i class="dripicons-graph-bar"></i>去编程</a>
+                        </li>
+
+                        <li class="has-submenu">
+                            <a th:href="@{/ranking}"><i class="dripicons-graph-bar"></i> 排行榜</a>
+                        </li>
+
+                        <li class="has-submenu">
+                            <a th:href="@{/help}"><i class="dripicons-help"></i> 帮助</a>
+                        </li>
+
+
+                    </ul>
+                    <!-- End navigation menu -->
+                </div>
+                <!-- end #navigation -->
+            </div>
+            <!-- end container -->
+        </div>
+        <!-- end navbar-custom -->
+    </header>
+    <!-- End Navigation Bar-->
+
+
+    <!-- jQuery  -->
+    <script th:src="@{/assets/js/jquery.min.js}"></script>
+    <script th:src="@{/assets/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/assets/js/jquery.slimscroll.js}"></script>
+    <script th:src="@{/assets/js/waves.min.js}"></script>
+
+    <!-- End Footer -->
+
+    <script th:src="@{/plugins/apexchart/apexcharts.min.js}"></script>
+    <script th:src="@{/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js}"></script>
+
+    <!-- App js -->
+    <script th:src="@{/assets/js/app.js}"></script>
+
+    <script>
+        const baseUrl = "/coding-online/student";
+        var currentUser = {
+            username: ""
+        };
+        $(document).ready(function () {
+            $.ajax({
+                url: baseUrl + '/getCurrentUser',
+                type: 'Get',
+                contentType: 'application/json',
+                dataType: "json",
+                async:false,
+                success: function (res) {
+                    currentUser = res.userInfo;
+                    questionPassed = res.questionPassed;
+                    $('#current-user-name').val(currentUser.username);
+                    $('#question-passed').text(questionPassed);
+                    $('#submit-num').text(currentUser.problemSubmit);
+                    $('#pass-num').text(currentUser.problemSuccess);
+                    $('#pass-rate-order').text(res.passOrder);
+                    $('#user-img').attr('src',baseUrl + "/show-img?filename=" + currentUser.img)
+                },
+                error: function (res) {
+
+                }
+            });
+        });
+        $(document).ready(function () {
+            $.ajax({
+                url: baseUrl + '/question-type',
+                type: 'post',
+                contentType: 'application/json',
+                dataType: "json",
+                success: function (res) {
+                    let $questionType = $('#questionType');
+                    for (let i = 0; i < res.length; i++) {
+                        $questionType.append('<li><a href="javascript:void(0)">' + res[i] + '</a></li>');
+                    }
+                },
+                error: function (res) {
+                }
+            });
+
+            $('#questionType').on('click', 'li a', function (){
+                let type = $(this)[0].innerText;
+                $(location).attr('href', baseUrl + '/question-list?type=' + type);
+            });
+        })
+
+
+    </script>
+</div>
+<!-- header-bg -->
+
+
+<!-- Footer -->
+<footer class="footer" th:fragment="common_footer">
+    © 2021 Coding Online <span class="d-none d-sm-inline-block"> - Crafted with <i class="mdi mdi-heart text-danger"></i> by xiaodong</span>.
+</footer>
+<!-- End Footer -->

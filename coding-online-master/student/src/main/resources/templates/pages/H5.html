@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>在线代码编辑器--Html/Markdown支持</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/jquery.splitter.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/lib/codemirror.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/theme/github-markdown.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/addon/display/fullscreen.css}">
+    <link th:href="@{/assets/css/vs.min.css}" rel="stylesheet">
+
+    <script th:src="@{/assets/js/jquery.min.js}"></script>
+    <script th:src="@{/assets/js/jquery.splitter.js}"></script>
+    <script th:src="@{/assets/lib/codemirror.js}"></script>
+    <script th:src="@{/assets/mode/javascript/javascript.js}"></script>
+    <script th:src="@{/assets/mode/css/css.js}"></script>
+    <script th:src="@{/assets/mode/xml/xml.js}"></script>
+    <script th:src="@{/assets/mode/markdown/markdown.js}"></script>
+    <script th:src="@{/assets/mode/htmlmixed/htmlmixed.js}"></script>
+    <script th:src="@{/assets/addon/selection/active-line.js}"></script>
+    <script th:src="@{/assets/addon/display/fullscreen.js}"></script>
+    <script th:src="@{/assets/js/emmet.js}"></script>
+    <script th:src="@{/assets/js/marked.min.js}"></script>
+    <script th:src="@{/assets/js/highlight.min.js}"></script>
+
+    <style>
+        * {
+            padding:0;
+            margin:0;
+        }
+        body {
+            font-size: 14px;
+            background: rgb(247, 247, 247);
+        }
+        header {
+            line-height:39px;
+            background: rgb(237, 237, 237);
+            border-bottom: hsl(0, 0%, 75%) solid 1px;
+            text-align: center;
+            height: 39px;
+            position: relative;
+        }
+        .logo {
+            position: absolute;
+            margin-left:10px;
+            background-color: #777;
+            background-image:
+                    linear-gradient(
+                            45deg,
+                            transparent 45%,
+                            hsla(48,20%,90%,1) 45%,
+                            hsla(48,20%,90%,1) 55%,
+                            transparent 0
+                    );
+            background-size: .05em .05em;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            -webkit-text-stroke: 1px #444;
+            font-size: 24px;
+            font-weight: 800;
+        }
+        header .tab {
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 28px;
+            line-height: 28px;
+            margin-top: 5px;
+            background: #fff;
+            height: 28px;
+            overflow: hidden;
+        }
+        header span {
+            display: inline-block;
+            font-size: 14px;
+            text-align: center;
+            width:100px;
+            line-height: 28px;
+            cursor: pointer;
+        }
+        header span.on {
+            background-color: hsl(215, 100%, 96%);
+        }
+        header .tips {
+            position: absolute;
+            right:10px;
+            top:0;
+            text-align: right;
+            color:#aaa;
+            font-size:12px;
+            text-shadow: 1px 1px 1px #fff;
+        }
+        header .contorl a {
+            border: 1px solid rgba(27,31,35,.2);
+            border-radius: .25em;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 12px;
+            line-height: 14px;
+            padding: 4px 8px;
+            position: relative;
+            white-space: nowrap;
+            background-color: #eff3f6;
+            color: #24292e;
+            text-decoration: none;
+        }
+        header .contorl a:hover {
+            background-color: #e6ebf1;
+            border-color: rgba(27,31,35,.35);
+        }
+        .preview {
+            border: none;
+            height: 100%;
+            background: white;
+            overflow-y: auto;
+            box-sizing: border-box;
+            padding:10px;
+            width: 100%;
+        }
+        #preview {
+            padding:0px;
+        }
+        .editbox {
+            height: 100%;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+        .CodeMirror {
+            height:auto;
+            background: rgb(247, 247, 247);
+        }
+        .splitter_panel .vsplitter {
+            width: 1px;
+            background: transparent;
+            border-left:1px solid #ccc;
+            z-index: 8;
+        }
+        .splitter_panel .vsplitter:hover {
+            border-left:1px dashed gray;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="logo">
+        EditOnline
+    </div>
+    <div class="tab">
+        <span class="on">HTML</span><span>教程</span>
+    </div>
+    <div class="tips">Editing, Press F11 to Switch FullScreen</div>
+</header>
+
+<div class="container" id="content">
+    <div class="edit-view">
+        <div class="editbox">
+            <!--html内容-->
+            <textarea id="htmlEdit">
+<!DOCTYPE html>
+<html>
+<head> 
+<meta charset="utf-8"> 
+<title>菜鸟教程(runoob.com)</title> 
+</head>
+<body>
+
+<div style="text-align:center">
+  <button onclick="playPause()">播放/暂停</button>
+  <button onclick="makeBig()">放大</button>
+  <button onclick="makeSmall()">缩小</button>
+  <button onclick="makeNormal()">普通</button>
+  <br>
+  <video id="video1" width="420">
+    <source src="mda-mjautfw3bkegchjz.mp4" type="video/mp4">
+    您的浏览器不支持 HTML5 video 标签。
+  </video>
+</div>
+
+<script>
+var myVideo=document.getElementById("video1");
+
+function playPause()
+{
+    if (myVideo.paused)
+        myVideo.play();
+    else
+        myVideo.pause();
+}
+
+function makeBig()
+{
+    myVideo.width=560;
+}
+
+function makeSmall()
+{
+    myVideo.width=320;
+}
+
+function makeNormal()
+{
+    myVideo.width=420;
+}
+</script>
+
+</body>
+</html>
+        </textarea>
+            <!--html内容-->
+        </div>
+        <!--Markdown内容-->
+        <div class="editbox" style="display: none;">
+        <textarea id="MarkdownEdit"><h1>HTML5 简介</h1>HTML5是HTML最新的修订版本，2014年10月由万维网联盟（W3C）完成标准制定。HTML5的设计目的是为了在移动设备上支持多媒体。HTML5 简单易学。
+        <h2>什么是 HTML5?</h2>
+            <p>HTML5 是下一代 HTML 标准。</p>
+            <p>HTML , HTML 4.01的上一个版本诞生于 1999 年。自从那以后，Web 世界已经经历了巨变。</p>
+            <p>HTML5 仍处于完善之中。然而，大部分现代浏览器已经具备了某些 HTML5 支持。</p>
+            <hr>
+            <h2>HTML5 是如何起步的？</h2>
+            <p>HTML5 是 W3C 与 WHATWG 合作的结果,WHATWG 指 Web Hypertext Application Technology Working Group。</p>
+            <p>WHATWG 致力于 web 表单和应用程序，而 W3C 专注于 XHTML 2.0。在 2006 年，双方决定进行合作，来创建一个新版本的 HTML。</p>
+            <p>HTML5 中的一些有趣的新特性：</p>
+            <ul>
+<li>用于绘画的 canvas 元素</li>
+<li>用于媒介回放的 video 和 audio 元素</li>
+<li>对本地离线存储的更好的支持</li>
+<li>新的特殊内容元素，比如 article、footer、header、nav、section</li>
+<li>新的表单控件，比如 calendar、date、time、email、url、search</li>
+</ul>
+            <hr>
+            <h2> HTML5 &lt;!DOCTYPE&gt;</h2>
+            <p> &lt;!doctype&gt; 声明必须位于 HTML5 文档中的第一行,使用非常简单:</p>
+            <div class="example">
+<div class="example_code">
+<div class="hl-main"><span class="hl-brackets">&lt;</span><span class="hl-code">!</span><span class="hl-var">DOCTYPE</span><span class="hl-code"> </span><span class="hl-var">html</span><span class="hl-brackets">&gt;</span></div>
+</div>
+</div>
+            <hr>
+            <h2>最小的HTML5文档</h2>
+            <p>下面是一个简单的HTML5文档：</p>
+            <div class="example">
+<div class="example_code">
+<div class="hl-main"><span class="hl-brackets">&lt;</span><span class="hl-code">!</span><span class="hl-var">DOCTYPE</span><span class="hl-code"> </span><span class="hl-var">html</span><span class="hl-brackets">&gt;</span><span class="hl-code">
+</span><span class="hl-brackets">&lt;</span><span class="hl-reserved">html</span><span class="hl-brackets">&gt;</span><span class="hl-code">
+</span><span class="hl-brackets">&lt;</span><span class="hl-reserved">head</span><span class="hl-brackets">&gt;</span><span class="hl-code">
+</span><span class="hl-brackets">&lt;</span><span class="hl-reserved">meta</span><span class="hl-code"> </span><span class="hl-var">charset</span><span class="hl-code">=</span><span class="hl-quotes">"</span><span class="hl-string">utf-8</span><span class="hl-quotes">"</span><span class="hl-brackets">&gt;</span><span class="hl-code">
+</span><span class="hl-brackets">&lt;</span><span class="hl-reserved">title</span><span class="hl-brackets">&gt;</span><span class="hl-code">文档标题</span><span class="hl-brackets">&lt;/</span><span class="hl-reserved">title</span><span class="hl-brackets">&gt;</span><span class="hl-code">
+</span><span class="hl-brackets">&lt;/</span><span class="hl-reserved">head</span><span class="hl-brackets">&gt;</span><span class="hl-code">
+
+</span><span class="hl-brackets">&lt;</span><span class="hl-reserved">body</span><span class="hl-brackets">&gt;</span><span class="hl-code">
+文档内容......
+</span><span class="hl-brackets">&lt;/</span><span class="hl-reserved">body</span><span class="hl-brackets">&gt;</span><span class="hl-code">
+
+</span><span class="hl-brackets">&lt;/</span><span class="hl-reserved">html</span><span class="hl-brackets">&gt;</span></div>
+</div>
+</div>
+            <blockquote><p><strong>注意：</strong>对于中文网页需要使用 <strong>&lt;meta charset="utf-8"&gt;</strong> 声明编码，否则会出现乱码。</p></blockquote>
+            <hr>
+            <h2>HTML5 的改进</h2>
+            <ul>
+<li>新元素</li>
+<li>新属性</li>
+<li>完全支持 CSS3 </li>
+<li>Video 和 Audio</li>
+<li>2D/3D 制图</li>
+<li>本地存储</li>
+<li>本地 SQL 数据</li>
+<li>Web 应用</li>
+</ul>
+            <hr>
+            <h2>HTML5 多媒体</h2>
+            <p>使用 HTML5 你可以简单的在网页中播放 视频(video)与音频 (audio) 。</p>
+            <ul>
+<li>HTML5 video</li>
+<li>HTML5 audio</li>
+</ul>
+            <hr>
+            <h2>HTML5 应用</h2>
+<p>使用 HTML5 你可以简单地开发应用</p>
+            <ul>
+<li>本地数据存储</li>
+<li>访问本地文件</li>
+<li>本地 SQL 数据</li>
+<li>缓存引用</li>
+<li>Javascript 工作者</li>
+<li>XHTMLHttpRequest 2</li>
+</ul>
+            <hr>
+            <h2>HTML5 图形</h2>
+            <p>使用 HTML5 你可以简单的绘制图形:</p>
+            <ul>
+<li>使用 canvas元素。</li>
+<li>使用内联 SVG。</li>
+<li>使用 CSS3 2D 转换、CSS3 3D 转换。</li>
+</ul>
+<h2>HTML5 使用 CSS3</h2>
+            <ul>
+<li>新选择器</li>
+<li>新属性</li>
+<li>动画</li>
+<li>2D/3D 转换</li>
+<li>圆角</li>
+<li>阴影效果</li>
+<li>可下载的字体</li>
+</ul>
+            <p>了解更多CSS3知识请查看本站的 <a href="/css3/css3-tutorial.html">CSS3 教程。</a></p>
+            <hr>
+            <h2>语义元素</h2>
+            <p>HTML5 添加了很多语义元素如下所示：</p>
+         <table class="reference"><tbody><tr><th>标签
+</th><th>描述
+</th></tr><tr><td>article
+</td><td>定义页面独立的内容区域。
+</td></tr><tr><td>aside
+</td><td>定义页面的侧边栏内容。
+</td></tr><tr><td>bdi
+</td><td>允许您设置一段文本，使其脱离其父元素的文本方向设置。
+</td></tr><tr><td>command
+</td><td>定义命令按钮，比如单选按钮、复选框或按钮
+</td></tr><tr><td>details
+</td><td>用于描述文档或文档某个部分的细节
+</td></tr><tr><td>dialog
+</td><td>定义对话框，比如提示框
+</td></tr><tr><td>summary
+</td><td>标签包含 details 元素的标题
+</td></tr><tr><td>figure
+</td><td>规定独立的流内容（图像、图表、照片、代码等等）。
+</td></tr><tr><td>figcaption
+</td><td>定义 figure 元素的标题
+</td></tr><tr><td>footer
+</td><td>定义 section 或 document 的页脚。
+</td></tr><tr><td>header
+</td><td>定义了文档的头部区域
+</td></tr><tr><td>mark
+</td><td>定义带有记号的文本。
+</td></tr><tr><td>meter
+</td><td>定义度量衡。仅用于已知最大和最小值的度量。
+</td></tr><tr><td>nav
+</td><td>定义导航链接的部分。
+</td></tr><tr><td>progress
+</td><td>定义任何类型的任务的进度。
+</td></tr><tr><td>ruby
+</td><td>定义 ruby 注释（中文注音或字符）。
+</td></tr><tr><td>rt
+</td><td>定义字符（中文注音或字符）的解释或发音。
+</td></tr><tr><td>rp
+</td><td>在 ruby 注释中使用，定义不支持 ruby 元素的浏览器所显示的内容。
+</td></tr><tr><td>section
+</td><td>定义文档中的节（section、区段）。
+</td></tr><tr><td>time
+</td><td>定义日期或时间。
+</td></tr><tr><td>wbr
+</td><td>规定在文本中的何处适合添加换行符。
+</td></tr></tbody></table>
+<h2>HTML5 表单</h2>
+            <p>新表单元素, 新属性，新输入类型，自动验证。</p>
+            <hr>
+            <p>以下的 HTML 4.01 元素在HTML5中已经被删除:</p>
+            <ul><li>acronym
+</li><li>applet
+</li><li>basefont
+</li><li>big
+</li><li>center
+</li><li>dir
+</li><li>font
+</li><li>frame
+</li><li>frameset
+</li><li>noframes
+</li><li>strike
+</li></ul>
+            <h1>
+            <a href="https://www.runoob.com/html/html5-intro.html">查看更多教程</a>
+          </h1>
+        </textarea>
+            <!--Markdown内容-->
+        </div>
+    </div>
+    <div class="result-view">
+        <iframe id="preview" class="preview"></iframe>
+        <div id="mkview" class="preview markdown-body" style="display: none;"></div>
+    </div>
+</div>
+
+
+<script>
+    let cHeight = document.documentElement.clientHeight - 40;
+    let splitter = $('#content').height(cHeight).split({
+        orientation: 'vertical',
+        limit: 100,
+        position: '30%'
+    });
+
+
+    var night = false;
+    var dom = document.getElementById('preview');
+    var editor = CodeMirror.fromTextArea(document.getElementById("htmlEdit"), {
+        lineNumbers: true,
+        mode: "htmlmixed",
+        indentUnit: 2,
+        lineWrapping:true,
+        styleActiveLine: true
+    });
+
+    // emmetCodeMirror(editor);
+
+    editor.on("keyup", function() {
+        runPreview()
+    });
+
+    var editorMark = CodeMirror.fromTextArea(document.getElementById("MarkdownEdit"), {
+        lineNumbers: false,
+        mode: "markdown",
+        indentUnit: 2,
+        lineWrapping:true,
+        styleActiveLine: true
+    });
+
+    editorMark.on("keyup", function() {
+        runMkview()
+    });
+
+    editor.setOption("extraKeys", {
+        "F11": function(cm) {
+            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+        },
+        "Esc": function(cm) {
+            if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+        }
+    });
+
+    editorMark.setOption("extraKeys", {
+        "F11": function(cm) {
+            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+        },
+        "Esc": function(cm) {
+            if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+        }
+    });
+
+    runPreview();
+    runMkview();
+    tab();
+
+    marked.setOptions({
+        highlight: function (code, lang) {
+            return hljs.highlightAuto(code).value;
+        }
+    });
+
+    function runPreview(){
+        dom.contentWindow.document.open();
+        dom.contentWindow.document.write(editor.getValue());
+        dom.contentWindow.document.close();
+    }
+
+    function runMkview(){
+        document.getElementById('mkview').innerHTML = marked(editorMark.getValue());
+    }
+
+    function tab(){
+        var head = document.getElementsByTagName('header');
+        var btns = head[0].getElementsByTagName('span');
+        var boxs = document.getElementsByClassName('editbox');
+        var views = document.getElementsByClassName('preview');
+        for(var i=0;i<btns.length;i++){
+            var btn = btns[i];
+            btn.index = i;
+            btn.onclick = function(){
+                for(var j=0;j<btns.length;j++){
+                    btns[j].className = '';
+                }
+                this.className = 'on';
+                for(var k = 0;k<boxs.length;k++){
+                    boxs[k].style.display = 'none';
+                }
+                boxs[this.index].style.display = 'block';
+                for(var h = 0;h<views.length;h++){
+                    views[h].style.display = 'none';
+                }
+                views[this.index].style.display = 'block';
+                //
+                // editor.refresh();
+                // editorMark.refresh();
+            }
+        }
+    }
+</script>
+</body>
+</html>

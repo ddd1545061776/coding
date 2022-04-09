@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <title>帮助</title>
+    <meta content="Responsive admin theme build on top of Bootstrap 4" name="description" />
+    <meta content="Themesdesign" name="author" />
+    <link rel="shortcut icon" th:href="@{/assets/images/favicon.ico}">
+
+    <link th:href="@{/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css}" rel="stylesheet">
+
+    <link th:href="@{/assets/css/bootstrap.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/assets/css/metismenu.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/assets/css/icons.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/assets/css/style.css}" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<div th:replace="common/common-section :: common_head"></div>
+<!-- header-bg -->
+
+<div class="wrapper">
+    <div class="container-fluid">
+
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="text-center mt-4">
+                    <h4 class="mt-0">常见问题</h4>
+                    <p class="text-muted"> 如果在使用本网站中遇到了一些问题请查看下列建议</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center mt-3">
+            <div class="col-lg-10">
+                <div class="row" id="accordionExample2">
+                    <div class="col-lg-6">
+                        <div class="mt-4 faq-box-content">
+                            <div class="card mb-3">
+                                <a data-toggle="collapse" href="#collapse_1" class="accordion" aria-expanded="true" aria-controls="collapse_1">
+                                    <div class="card-header bg-white" id="heading_1">
+                                        <h6 class="mb-0 mt-0">如何选择开发语言 ?</h6>
+                                    </div>
+                                </a>
+                                <div id="collapse_1" class="collapse show" aria-labelledby="heading_1" data-parent="#accordionExample2">
+                                    <div class="card-body">
+                                        <p class="text-muted mb-0">在问题页面的代码编辑框上方，存在语言下拉框，可以选择需要的编程语言，本网站支持Java、C、C++和python语言的使用。</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- collapse one end -->
+
+                            <div class="card mb-3">
+                                <a data-toggle="collapse" href="#collapse_2" class="accordion collapsed" aria-expanded="false" aria-controls="collapse_2">
+                                    <div class="card-header bg-white" id="heading_2">
+                                        <h6 class="mb-0 mt-0">如何选择代码编辑主题</h6>
+                                    </div>
+                                </a>
+                                <div id="collapse_2" class="collapse" aria-labelledby="heading_2" data-parent="#accordionExample2">
+                                    <div class="card-body">
+                                        <p class="text-muted mb-0">在问题页面的代码编辑框上方，存在主题下拉框，可以选择需要的主题</p>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div class="card mb-3">
+                                <a data-toggle="collapse" href="#collapse_3" class="accordion collapsed" aria-expanded="false" aria-controls="collapse_3">
+                                    <div class="card-header bg-white" id="heading_3">
+                                        <h6 class="mb-0 mt-0">代码是否需要写出基础类库之外的import语句和include语句 ?</h6>
+                                    </div>
+                                </a>
+                                <div id="collapse_3" class="collapse" aria-labelledby="heading_3" data-parent="#accordionExample2">
+                                    <div class="card-body">
+                                        <p class="text-muted mb-0">需要</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- collapse three end -->
+
+                            <div class="card mb-3">
+                                <a data-toggle="collapse" href="#collapse_4" class="accordion collapsed" aria-expanded="false" aria-controls="collapse_4">
+                                    <div class="card-header bg-white" id="heading_4">
+                                        <h6 class="mb-0 mt-0">Java语言对类的命名是否有需求</h6>
+                                    </div>
+                                </a>
+                                <div id="collapse_4" class="collapse" aria-labelledby="heading_4" data-parent="#accordionExample2">
+                                    <div class="card-body">
+                                        <p class="text-muted mb-0">需要使用以大写字母开头接小写字母的驼峰命名，当前仅仅支持类名为 Main</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- collapse four end -->
+
+
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="mt-4 faq-box-content">
+                            <div class="card mb-3">
+                                <a data-toggle="collapse" href="#collapse_5" class="accordion collapsed" aria-expanded="false" aria-controls="collapse_5">
+                                    <div class="card-header bg-white" id="heading_5">
+                                        <h6 class="mb-0 mt-0">代码没有错误？</h6>
+                                    </div>
+                                </a>
+                                <div id="collapse_5" class="collapse" aria-labelledby="heading_5" data-parent="#accordionExample2">
+                                    <div class="card-body">
+                                        <p class="text-muted mb-0">如果确认当前解答结果正确，可将该题目与教师反馈</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                              <!-- collapse one end -->
+
+                                                                                    <div class="card mb-3">
+                                                                                        <a data-toggle="collapse" href="#collapse_8" class="accordion collapsed" aria-expanded="false" aria-controls="collapse_8">
+                                                                                            <div class="card-header bg-white" id="heading_8">
+                                                                                                <h6 class="mb-0 mt-0">关于python的方法命名</h6>
+                                                                                            </div>
+                                                                                        </a>
+                                                                                        <div id="collapse_8" class="collapse" aria-labelledby="heading_8" data-parent="#accordionExample2">
+                                                                                            <div class="card-body">
+                                                                                                <p class="text-muted mb-0">必须以main命名</p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                           <!-- collapse one end -->
+
+                                                                                                                <div class="card mb-3">
+                                                                                                                    <a data-toggle="collapse" href="#collapse_9" class="accordion collapsed" aria-expanded="false" aria-controls="collapse_9">
+                                                                                                                        <div class="card-header bg-white" id="heading_2">
+                                                                                                                            <h6 class="mb-0 mt-0">关于题目的返回值</h6>
+                                                                                                                        </div>
+                                                                                                                    </a>
+                                                                                                                    <div id="collapse_9" class="collapse" aria-labelledby="heading_9" data-parent="#accordionExample2">
+                                                                                                                        <div class="card-body">
+                                                                                                                            <p class="text-muted mb-0">目前不支持方法为void的题目</p>
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                        <!-- collapse two end -->
+                            <!-- collapse one end -->
+
+                            <div class="card mb-3">
+                                <a data-toggle="collapse" href="#collapse_7" class="accordion collapsed" aria-expanded="false" aria-controls="collapse_7">
+                                    <div class="card-header bg-white" id="heading_7">
+                                        <h6 class="mb-0 mt-0">是否可以添加题目 ?</h6>
+                                    </div>
+                                </a>
+                                <div id="collapse_7" class="collapse" aria-labelledby="heading_7" data-parent="#accordionExample2">
+                                    <div class="card-body">
+                                        <p class="text-muted mb-0">当前学生用户不支持题目添加，如果有题目添加需求，请联系课程教师</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- end container-fluid -->
+</div>
+<!-- end wrapper -->
+
+<!-- Footer -->
+<div th:replace="common/common-section :: common_footer"></div>
+
+</body>
+
+</html>

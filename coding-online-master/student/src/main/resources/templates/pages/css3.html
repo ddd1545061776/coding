@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>在线代码编辑器--Html/Markdown支持</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/jquery.splitter.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/lib/codemirror.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/theme/github-markdown.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/addon/display/fullscreen.css}">
+    <link th:href="@{/assets/css/vs.min.css}" rel="stylesheet">
+
+    <script th:src="@{/assets/js/jquery.min.js}"></script>
+    <script th:src="@{/assets/js/jquery.splitter.js}"></script>
+    <script th:src="@{/assets/lib/codemirror.js}"></script>
+    <script th:src="@{/assets/mode/javascript/javascript.js}"></script>
+    <script th:src="@{/assets/mode/css/css.js}"></script>
+    <script th:src="@{/assets/mode/xml/xml.js}"></script>
+    <script th:src="@{/assets/mode/markdown/markdown.js}"></script>
+    <script th:src="@{/assets/mode/htmlmixed/htmlmixed.js}"></script>
+    <script th:src="@{/assets/addon/selection/active-line.js}"></script>
+    <script th:src="@{/assets/addon/display/fullscreen.js}"></script>
+    <script th:src="@{/assets/js/emmet.js}"></script>
+    <script th:src="@{/assets/js/marked.min.js}"></script>
+    <script th:src="@{/assets/js/highlight.min.js}"></script>
+
+    <style>
+        * {
+            padding:0;
+            margin:0;
+        }
+        body {
+            font-size: 14px;
+            background: rgb(247, 247, 247);
+        }
+        header {
+            line-height:39px;
+            background: rgb(237, 237, 237);
+            border-bottom: hsl(0, 0%, 75%) solid 1px;
+            text-align: center;
+            height: 39px;
+            position: relative;
+        }
+        .logo {
+            position: absolute;
+            margin-left:10px;
+            background-color: #777;
+            background-image:
+                    linear-gradient(
+                            45deg,
+                            transparent 45%,
+                            hsla(48,20%,90%,1) 45%,
+                            hsla(48,20%,90%,1) 55%,
+                            transparent 0
+                    );
+            background-size: .05em .05em;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            -webkit-text-stroke: 1px #444;
+            font-size: 24px;
+            font-weight: 800;
+        }
+        header .tab {
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 28px;
+            line-height: 28px;
+            margin-top: 5px;
+            background: #fff;
+            height: 28px;
+            overflow: hidden;
+        }
+        header span {
+            display: inline-block;
+            font-size: 14px;
+            text-align: center;
+            width:100px;
+            line-height: 28px;
+            cursor: pointer;
+        }
+        header span.on {
+            background-color: hsl(215, 100%, 96%);
+        }
+        header .tips {
+            position: absolute;
+            right:10px;
+            top:0;
+            text-align: right;
+            color:#aaa;
+            font-size:12px;
+            text-shadow: 1px 1px 1px #fff;
+        }
+        header .contorl a {
+            border: 1px solid rgba(27,31,35,.2);
+            border-radius: .25em;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 12px;
+            line-height: 14px;
+            padding: 4px 8px;
+            position: relative;
+            white-space: nowrap;
+            background-color: #eff3f6;
+            color: #24292e;
+            text-decoration: none;
+        }
+        header .contorl a:hover {
+            background-color: #e6ebf1;
+            border-color: rgba(27,31,35,.35);
+        }
+        .preview {
+            border: none;
+            height: 100%;
+            background: white;
+            overflow-y: auto;
+            box-sizing: border-box;
+            padding:10px;
+            width: 100%;
+        }
+        #preview {
+            padding:0px;
+        }
+        .editbox {
+            height: 100%;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+        .CodeMirror {
+            height:auto;
+            background: rgb(247, 247, 247);
+        }
+        .splitter_panel .vsplitter {
+            width: 1px;
+            background: transparent;
+            border-left:1px solid #ccc;
+            z-index: 8;
+        }
+        .splitter_panel .vsplitter:hover {
+            border-left:1px dashed gray;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="logo">
+        EditOnline
+    </div>
+    <div class="tab">
+        <span class="on">HTML</span><span>教程</span>
+    </div>
+    <div class="tips">Editing, Press F11 to Switch FullScreen</div>
+</header>
+
+<div class="container" id="content">
+    <div class="edit-view">
+        <div class="editbox">
+            <!--html内容-->
+            <textarea id="htmlEdit">
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>菜鸟教程(runoob.com)</title>
+<style>
+div
+{
+    width:100px;
+    height:100px;
+    background:red;
+    transition:width 2s;
+    -webkit-transition:width 2s; /* Safari */
+}
+
+div:hover
+{
+    width:300px;
+}
+</style>
+</head>
+<body>
+
+<p><b>注意：</b>该实例无法在 Internet Explorer 9 及更早 IE 版本上工作。</p>
+
+<div></div>
+
+<p>鼠标移动到 div 元素上，查看过渡效果。</p>
+
+</body>
+</html>
+
+
+        </textarea>
+            <!--html内容-->
+        </div>
+        <!--Markdown内容-->
+        <div class="editbox" style="display: none;">
+        <textarea id="MarkdownEdit"><h1>CSS3 <span class="color_h1">简介</span></h1><hr>
+            <p class="intro">CSS3 已完全向后兼容，所以你就不必改变现有的设计。</p><hr>
+            <h2>CSS3
+模块</h2>
+            <p>CSS3 被拆分为"模块"。旧规范已拆分成小块，还增加了新的。</p>
+            <p>一些最重要 CSS3 模块如下：</p>
+            <ul>
+<li>选择器</li>
+<li>盒模型</li>
+<li>背景和边框</li>
+<li>文字特效</li>
+<li>2D/3D转换</li>
+<li>动画</li>
+<li>多列布局</li>
+<li>用户界面</li>
+</ul>
+            <hr>
+            <h1>CSS3 <span class="color_h1">边框</span>
+</h1>
+            <div>
+<h2>CSS3 边框</h2>
+<p>用 CSS3，你可以创建圆角边框，添加阴影框，并作为边界的形象而不使用设计程序，如 Photoshop。</p>
+<p>在本章中，您将了解以下的边框属性：</p>
+<ul>
+<li>border-radius</li>
+	<li>box-shadow</li>
+	<li>border-image</li>
+</ul>
+</div>
+            <hr>
+            <h2>CSS3 圆角</h2>
+            <p>在 CSS2 中添加圆角棘手。我们不得不在每个角落使用不同的图像。</p>
+            <p>在 CSS3 中，很容易创建圆角。</p>
+            <p>在 CSS3 中 border-radius 属性被用于创建圆角：</p>
+            <div id="rounded_borders">这是圆角边框！</div>
+            <h2>新边框属性</h2>
+            <table class="reference">
+  <tbody><tr>
+    <th width="30%" align="left">属性</th>
+    <th width="65%" align="left">说明</th>
+    <th width="5%" align="left">CSS</th>
+  </tr>
+  <tr>
+    <td>border-image</td>
+    <td>设置所有边框图像的速记属性。</td>
+    <td>3</td>
+  </tr>
+  <tr>
+    <td>border-radius</td>
+    <td>一个用于设置所有四个边框- *-半径属性的速记属性</td>
+    <td>3</td>
+  </tr>
+  <tr>
+    <td>box-shadow</td>
+    <td>附加一个或多个下拉框的阴影</td>
+    <td>3</td>
+  </tr>
+</tbody></table>
+            <h1>CSS3 <span class="color_h1">背景</span>
+</h1>
+            <hr>
+            <h2>CSS3 背景</h2>
+            <p>CSS3 中包含几个新的背景属性，提供更大背景元素控制。</p>
+            <p>在本章您将了解以下背景属性：</p>
+            <ul>
+<li>background-image</li>
+<li>background-size</li>
+<li>background-origin</li>
+<li>background-clip</li>
+</ul>
+            <h2>CSS3 background-image属性</h2>
+            <div></div>
+            <p>CSS3中可以通过background-image属性添加背景图片。</p>
+            <p>不同的背景图像和图像用逗号隔开，所有的图片中显示在最顶端的为第一张。</p>
+            <h1>CSS3 <span class="color_h1">动画</span>
+</h1>
+            <hr>
+            <h2>CSS3的动画属性</h2>
+            <p>下面的表格列出了 @keyframes 规则和所有动画属性：</p>
+            <table class="reference">
+
+<tbody><tr>
+<th style="width:30%">属性</th>
+<th>描述</th>
+<th style="width:5%">CSS</th>
+</tr>
+
+<tr>
+<td>@keyframes</a></td>
+<td>规定动画。</td>
+<td>3</td>
+</tr>
+
+<tr>
+<td>animation</a></td>
+<td>所有动画属性的简写属性。</td>
+<td>3</td>
+</tr>
+
+<tr>
+<td>animation-name</a></td>
+<td>规定 @keyframes 动画的名称。</td>
+<td>3</td>
+</tr>
+
+<tr>
+<td>animation-duration</td>
+<td>规定动画完成一个周期所花费的秒或毫秒。默认是 0。</td>
+<td>3</td>
+</tr>
+
+<tr>
+<td>animation-timing-function</td>
+<td>规定动画的速度曲线。默认是 "ease"。</td>
+<td>3</td>
+</tr>
+<tr>
+<td>animation-fill-mode</td>
+<td>规定当动画不播放时（当动画完成时，或当动画有一个延迟未开始播放时），要应用到元素的样式。</td>
+<td>3</td>
+</tr>
+<tr>
+<td>animation-delay</td>
+<td>规定动画何时开始。默认是 0。</td>
+<td>3</td>
+</tr>
+
+<tr>
+<td>animation-iteration-count</td>
+<td>规定动画被播放的次数。默认是 1。</td>
+<td>3</td>
+</tr>
+
+<tr>
+<td>animation-direction</td>
+<td>规定动画是否在下一周期逆向地播放。默认是 "normal"。</td>
+<td>3</td>
+</tr>
+
+<tr>
+<td>animation-play-state</td>
+<td>规定动画是否正在运行或暂停。默认是 "running"。</td>
+<td>3</td>
+</tr>
+</tbody></table>
+            <h1>CSS3 <span class="color_h1">边框</span>
+</h1>
+            <div>
+<h2>CSS3 边框</h2>
+<p>用 CSS3，你可以创建圆角边框，添加阴影框，并作为边界的形象而不使用设计程序，如 Photoshop。</p>
+<p>在本章中，您将了解以下的边框属性：</p>
+<ul>
+<li>border-radius</li>
+	<li>box-shadow</li>
+	<li>border-image</li>
+</ul>
+</div>
+            <hr>
+            <h2>CSS3 圆角</h2>
+            <p>在 CSS2 中添加圆角棘手。我们不得不在每个角落使用不同的图像。</p>
+            <p>在 CSS3 中，很容易创建圆角。</p>
+            <p>在 CSS3 中 border-radius 属性被用于创建圆角：</p>
+            <h1>CSS3 <span class="color_h1">文本效果</span>
+</h1>
+            <hr>
+            <h2>CSS3 文本效果</h2>
+            <p>CSS3中包含几个新的文本特征。</p>
+            <p>在本章中您将了解以下文本属性：</p>
+            <ul>
+<li>text-shadow</li>
+<li>box-shadow</li>
+<li>text-overflow</li>
+<li>word-wrap</li>
+<li>word-break</li>
+</ul>
+            <hr>
+            <h2>CSS3 的文本阴影</h2>
+            <p>CSS3 中，text-shadow属性适用于文本阴影。</p>
+            <p>
+<img src="text_shadow_effect.gif" alt="阴影效果!"></p>
+            <h1>
+            <a href="https://www.runoob.com/css3/css3-tutorial.html">查看更多教程</a>
+          </h1>
+        </textarea>
+            <!--Markdown内容-->
+        </div>
+    </div>
+    <div class="result-view">
+        <iframe id="preview" class="preview"></iframe>
+        <div id="mkview" class="preview markdown-body" style="display: none;"></div>
+    </div>
+</div>
+
+
+<script>
+    let cHeight = document.documentElement.clientHeight - 40;
+    let splitter = $('#content').height(cHeight).split({
+        orientation: 'vertical',
+        limit: 100,
+        position: '30%'
+    });
+
+
+    var night = false;
+    var dom = document.getElementById('preview');
+    var editor = CodeMirror.fromTextArea(document.getElementById("htmlEdit"), {
+        lineNumbers: true,
+        mode: "htmlmixed",
+        indentUnit: 2,
+        lineWrapping:true,
+        styleActiveLine: true
+    });
+
+    // emmetCodeMirror(editor);
+
+    editor.on("keyup", function() {
+        runPreview()
+    });
+
+    var editorMark = CodeMirror.fromTextArea(document.getElementById("MarkdownEdit"), {
+        lineNumbers: false,
+        mode: "markdown",
+        indentUnit: 2,
+        lineWrapping:true,
+        styleActiveLine: true
+    });
+
+    editorMark.on("keyup", function() {
+        runMkview()
+    });
+
+    editor.setOption("extraKeys", {
+        "F11": function(cm) {
+            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+        },
+        "Esc": function(cm) {
+            if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+        }
+    });
+
+    editorMark.setOption("extraKeys", {
+        "F11": function(cm) {
+            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+        },
+        "Esc": function(cm) {
+            if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+        }
+    });
+
+    runPreview();
+    runMkview();
+    tab();
+
+    marked.setOptions({
+        highlight: function (code, lang) {
+            return hljs.highlightAuto(code).value;
+        }
+    });
+
+    function runPreview(){
+        dom.contentWindow.document.open();
+        dom.contentWindow.document.write(editor.getValue());
+        dom.contentWindow.document.close();
+    }
+
+    function runMkview(){
+        document.getElementById('mkview').innerHTML = marked(editorMark.getValue());
+    }
+
+    function tab(){
+        var head = document.getElementsByTagName('header');
+        var btns = head[0].getElementsByTagName('span');
+        var boxs = document.getElementsByClassName('editbox');
+        var views = document.getElementsByClassName('preview');
+        for(var i=0;i<btns.length;i++){
+            var btn = btns[i];
+            btn.index = i;
+            btn.onclick = function(){
+                for(var j=0;j<btns.length;j++){
+                    btns[j].className = '';
+                }
+                this.className = 'on';
+                for(var k = 0;k<boxs.length;k++){
+                    boxs[k].style.display = 'none';
+                }
+                boxs[this.index].style.display = 'block';
+                for(var h = 0;h<views.length;h++){
+                    views[h].style.display = 'none';
+                }
+                views[this.index].style.display = 'block';
+                //
+                // editor.refresh();
+                // editorMark.refresh();
+            }
+        }
+    }
+</script>
+</body>
+</html>

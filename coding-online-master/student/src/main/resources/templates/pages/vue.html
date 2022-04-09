@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>在线代码编辑器--Html/Markdown支持</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/jquery.splitter.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/lib/codemirror.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/theme/github-markdown.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/addon/display/fullscreen.css}">
+    <link th:href="@{/assets/css/vs.min.css}" rel="stylesheet">
+
+    <script th:src="@{/assets/js/jquery.min.js}"></script>
+    <script th:src="@{/assets/js/jquery.splitter.js}"></script>
+    <script th:src="@{/assets/lib/codemirror.js}"></script>
+    <script th:src="@{/assets/mode/javascript/javascript.js}"></script>
+    <script th:src="@{/assets/mode/css/css.js}"></script>
+    <script th:src="@{/assets/mode/xml/xml.js}"></script>
+    <script th:src="@{/assets/mode/markdown/markdown.js}"></script>
+    <script th:src="@{/assets/mode/htmlmixed/htmlmixed.js}"></script>
+    <script th:src="@{/assets/addon/selection/active-line.js}"></script>
+    <script th:src="@{/assets/addon/display/fullscreen.js}"></script>
+    <script th:src="@{/assets/js/emmet.js}"></script>
+    <script th:src="@{/assets/js/marked.min.js}"></script>
+    <script th:src="@{/assets/js/highlight.min.js}"></script>
+
+    <style>
+        * {
+            padding:0;
+            margin:0;
+        }
+        body {
+            font-size: 14px;
+            background: rgb(247, 247, 247);
+        }
+        header {
+            line-height:39px;
+            background: rgb(237, 237, 237);
+            border-bottom: hsl(0, 0%, 75%) solid 1px;
+            text-align: center;
+            height: 39px;
+            position: relative;
+        }
+        .logo {
+            position: absolute;
+            margin-left:10px;
+            background-color: #777;
+            background-image:
+                    linear-gradient(
+                            45deg,
+                            transparent 45%,
+                            hsla(48,20%,90%,1) 45%,
+                            hsla(48,20%,90%,1) 55%,
+                            transparent 0
+                    );
+            background-size: .05em .05em;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            -webkit-text-stroke: 1px #444;
+            font-size: 24px;
+            font-weight: 800;
+        }
+        header .tab {
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 28px;
+            line-height: 28px;
+            margin-top: 5px;
+            background: #fff;
+            height: 28px;
+            overflow: hidden;
+        }
+        header span {
+            display: inline-block;
+            font-size: 14px;
+            text-align: center;
+            width:100px;
+            line-height: 28px;
+            cursor: pointer;
+        }
+        header span.on {
+            background-color: hsl(215, 100%, 96%);
+        }
+        header .tips {
+            position: absolute;
+            right:10px;
+            top:0;
+            text-align: right;
+            color:#aaa;
+            font-size:12px;
+            text-shadow: 1px 1px 1px #fff;
+        }
+        header .contorl a {
+            border: 1px solid rgba(27,31,35,.2);
+            border-radius: .25em;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 12px;
+            line-height: 14px;
+            padding: 4px 8px;
+            position: relative;
+            white-space: nowrap;
+            background-color: #eff3f6;
+            color: #24292e;
+            text-decoration: none;
+        }
+        header .contorl a:hover {
+            background-color: #e6ebf1;
+            border-color: rgba(27,31,35,.35);
+        }
+        .preview {
+            border: none;
+            height: 100%;
+            background: white;
+            overflow-y: auto;
+            box-sizing: border-box;
+            padding:10px;
+            width: 100%;
+        }
+        #preview {
+            padding:0px;
+        }
+        .editbox {
+            height: 100%;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+        .CodeMirror {
+            height:auto;
+            background: rgb(247, 247, 247);
+        }
+        .splitter_panel .vsplitter {
+            width: 1px;
+            background: transparent;
+            border-left:1px solid #ccc;
+            z-index: 8;
+        }
+        .splitter_panel .vsplitter:hover {
+            border-left:1px dashed gray;
+        }
+        .marked{
+            padding: 0.2em;
+            margin: 0;
+            background-color: #eceae6;
+            border-radius: 3px;
+            font-weight: bold;
+            font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="logo">
+        EditOnline
+    </div>
+    <div class="tab">
+        <span class="on">HTML</span><span>教程</span>
+    </div>
+    <div class="tips">Editing, Press F11 to Switch FullScreen</div>
+</header>
+
+<div class="container" id="content">
+    <div class="edit-view">
+        <div class="editbox">
+            <!--html内容-->
+            <textarea id="htmlEdit">
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Vue 测试实例 </title>
+<script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
+</head>
+<body>
+<div id="app">
+  <p>{{ message }}</p>
+</div>
+
+<script>
+new Vue({
+    el: '#app',
+    data: {
+        message: 'Hello Vue.js!'
+    }
+})
+</script>
+</body>
+</html>
+
+
+        </textarea>
+            <!--html内容-->
+        </div>
+        <!--Markdown内容-->
+        <div class="editbox" style="display: none;">
+        <textarea id="MarkdownEdit"><h1>Vue.js 教程</h1>
+<div class="tutintro">
+<img src="https://www.runoob.com/wp-content/uploads/2017/01/vue.png" alt="Angular" style="height:132px;width:132px">
+<p>Vue.js（读音 /vjuː/, 类似于 view） 是一套构建用户界面的渐进式框架。</p>
+<p>Vue 只关注视图层， 采用自底向上增量开发的设计。</p><p>
+Vue 的目标是通过尽可能简单的 API 实现响应的数据绑定和组合的视图组件。</p>
+<p>Vue 学习起来非常简单，本教程基于 Vue 2.1.8 版本测试，Vue3 请参阅 <a href="https://www.runoob.com/vue3/vue3-tutorial.html" rel="noopener" target="_blank">Vue3 教程</a>。</p>
+</div>
+            <hr>
+            <h2>阅读本教程前，您需要了解的知识：</h2>
+            <ul>
+<li>HTML</li>
+	<li>CSS</li>
+	<li>JavaScript</li>
+</ul>
+            <p>
+本教程主要介绍了 Vue2.x 版本的使用。</p>
+            <hr>
+<h1>Vue.js 安装</h1>
+            <h2>1、独立版本</h2>
+<p>我们可以在 Vue.js 的官网上直接下载 vue.min.js 并用 <b>script</b> 标签引入。</p>
+            <p>
+<a class="download" href="https://vuejs.org/js/vue.min.js" download="" target="_blank" rel="external noopener noreferrer">下载 Vue.js</a>
+</p>
+<hr>
+            <h2>2、使用 CDN 方法</h2>
+            <p>以下推荐国外比较稳定的两个 CDN，国内还没发现哪一家比较好，目前还是建议下载到本地。</p>
+            <ul>
+<li>
+<p><strong>Staticfile CDN（国内）</strong> : <a href="https://cdn.staticfile.org/vue/2.2.2/vue.min.js" target="_blank" rel="external noopener noreferrer">https://cdn.staticfile.org/vue/2.2.2/vue.min.js</a></p></li>
+<li>
+<p><strong>unpkg</strong>：<a href="https://unpkg.com/vue@2.6.14/dist/vue.min.js" target="_blank" rel="external noopener noreferrer">https://unpkg.com/vue@2.6.14/dist/vue.min.js</a>。</p></li><li>
+<p><strong>cdnjs</strong> : <a href="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.8/vue.min.js" target="_blank" rel="external noopener noreferrer">https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.8/vue.min.js</a></p></li>
+</ul>
+            <h2>3、NPM 方法</h2>
+            <p>由于 npm 安装速度慢，本教程使用了淘宝的镜像及其命令 cnpm，安装使用介绍参照：<a href="/nodejs/nodejs-npm.html#taobaonpm" target="_blank" rel="noopener noreferrer">使用淘宝 NPM 镜像</a>。</p>
+            <p>npm 版本需要大于 3.0，如果低于此版本需要升级它：</p>
+
+```
+# 查看版本
+$ npm -v
+2.3.0
+
+#升级 npm
+cnpm install npm -g
+
+
+# 升级或安装 cnpm
+npm install cnpm -g
+```
+<p>在用 Vue.js 构建大型应用时推荐使用 cnpm 安装：</p>
+
+```
+# 最新稳定版
+$ cnpm install vue
+```
+<h2>Vue 项目打包</h2>
+
+```
+npm run build
+```
+<h1>Vue.js 起步
+</h1>
+            <p>每个 Vue 应用都需要通过实例化 Vue 来实现。</p>
+            <p>语法格式如下：</p>
+
+```
+  var vm = new Vue({
+  // 选项
+})
+```
+
+<p>接下来让我们通过实例来看下 Vue 构造器中需要哪些内容：</p>
+<h3>尝试一下</h3>
+
+```
+<div id="vue_det">
+    <h1>site : {{site}}</h1>
+    <h1>url : {{url}}</h1>
+    <h1>{{details()}}</h1>
+</div>
+<script type="text/javascript">
+    var vm = new Vue({
+        el: '#vue_det',
+        data: {
+            site: "菜鸟教程",
+            url: "www.runoob.com",
+            alexa: "10000"
+        },
+        methods: {
+            details: function() {
+                return  this.site + " - 学的不仅是技术，更是梦想！";
+            }
+        }
+    })
+</script>
+```
+<p>可以看到在 Vue 构造器中有一个el 参数，它是 DOM 元素中的 id。在上面实例中 id 为 vue_det，在 div 元素中：</p>
+
+```
+       <div id = "vue_det"></div>
+```
+<p>这意味着我们接下来的改动全部在以上指定的 div 内，div 外部不受影响。</p>
+            <p>接下来我们看看如何定义数据对象。</p>
+            <p><strong>data</strong> 用于定义属性，实例中有三个属性分别为：site、url、alexa。</p>
+            <p><span class="marked">methods</span> 用于定义的函数，可以通过 return 来返回函数值。</p>
+            <p><span class="marked">{{ }}</span> 用于输出对象属性和函数返回值。</p>
+
+```
+            <div id="vue_det">
+    <h1>site : {{site}}</h1>
+    <h1>url : {{url}}</h1>
+    <h1>{{details()}}</h1>
+</div>
+```
+<p>当一个 Vue 实例被创建时，它向 Vue 的响应式系统中加入了其 data 对象中能找到的所有的属性。当这些属性的值发生改变时，html 视图将也会产生相应的变化。</p>
+       <h3>尝试一下</h3>
+
+```
+            <div id="vue_det">
+    <h1>site : {{site}}</h1>
+    <h1>url : {{url}}</h1>
+    <h1>Alexa : {{alexa}}</h1>
+</div>
+<script type="text/javascript">
+// 我们的数据对象
+var data = { site: "菜鸟教程", url: "www.runoob.com", alexa: 10000}
+var vm = new Vue({
+    el: '#vue_det',
+    data: data
+})
+// 它们引用相同的对象！
+document.write(vm.site === data.site) // true
+document.write("<br>")
+// 设置属性也会影响到原始数据
+vm.site = "Runoob"
+document.write(data.site + "<br>") // Runoob
+
+// ……反之亦然
+data.alexa = 1234
+document.write(vm.alexa) // 1234
+</script>
+```
+<p>除了数据属性，Vue 实例还提供了一些有用的实例属性与方法。它们都有前缀 $，以便与用户定义的属性区分开来。例如：</p>
+            <h3>尝试一下</h3>
+
+```
+<div id="vue_det">
+    <h1>site : {{site}}</h1>
+    <h1>url : {{url}}</h1>
+    <h1>Alexa : {{alexa}}</h1>
+</div>
+<script type="text/javascript">
+// 我们的数据对象
+var data = { site: "菜鸟教程", url: "www.runoob.com", alexa: 10000}
+var vm = new Vue({
+    el: '#vue_det',
+    data: data
+})
+
+document.write(vm.$data === data) // true
+document.write("<br>")
+document.write(vm.$el === document.getElementById('vue_det')) // true
+</script>
+```
+            <h1>
+            <a href="https://www.runoob.com/vue2/vue-start.html">查看更多教程</a>
+          </h1>
+        </textarea>
+
+            <!--Markdown内容-->
+        </div>
+    </div>
+    <div class="result-view">
+        <iframe id="preview" class="preview"></iframe>
+        <div id="mkview" class="preview markdown-body" style="display: none;"></div>
+    </div>
+</div>
+
+
+<script>
+    let cHeight = document.documentElement.clientHeight - 40;
+    let splitter = $('#content').height(cHeight).split({
+        orientation: 'vertical',
+        limit: 100,
+        position: '30%'
+    });
+
+
+    var night = false;
+    var dom = document.getElementById('preview');
+    var editor = CodeMirror.fromTextArea(document.getElementById("htmlEdit"), {
+        lineNumbers: true,
+        mode: "htmlmixed",
+        indentUnit: 2,
+        lineWrapping:true,
+        styleActiveLine: true
+    });
+
+    // emmetCodeMirror(editor);
+
+    editor.on("keyup", function() {
+        runPreview()
+    });
+
+    var editorMark = CodeMirror.fromTextArea(document.getElementById("MarkdownEdit"), {
+        lineNumbers: false,
+        mode: "markdown",
+        indentUnit: 2,
+        lineWrapping:true,
+        styleActiveLine: true
+    });
+
+    editorMark.on("keyup", function() {
+        runMkview()
+    });
+
+    editor.setOption("extraKeys", {
+        "F11": function(cm) {
+            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+        },
+        "Esc": function(cm) {
+            if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+        }
+    });
+
+    editorMark.setOption("extraKeys", {
+        "F11": function(cm) {
+            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+        },
+        "Esc": function(cm) {
+            if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+        }
+    });
+
+    runPreview();
+    runMkview();
+    tab();
+
+    marked.setOptions({
+        highlight: function (code, lang) {
+            return hljs.highlightAuto(code).value;
+        }
+    });
+
+    function runPreview(){
+        dom.contentWindow.document.open();
+        dom.contentWindow.document.write(editor.getValue());
+        dom.contentWindow.document.close();
+    }
+
+    function runMkview(){
+        document.getElementById('mkview').innerHTML = marked(editorMark.getValue());
+    }
+
+    function tab(){
+        var head = document.getElementsByTagName('header');
+        var btns = head[0].getElementsByTagName('span');
+        var boxs = document.getElementsByClassName('editbox');
+        var views = document.getElementsByClassName('preview');
+        for(var i=0;i<btns.length;i++){
+            var btn = btns[i];
+            btn.index = i;
+            btn.onclick = function(){
+                for(var j=0;j<btns.length;j++){
+                    btns[j].className = '';
+                }
+                this.className = 'on';
+                for(var k = 0;k<boxs.length;k++){
+                    boxs[k].style.display = 'none';
+                }
+                boxs[this.index].style.display = 'block';
+                for(var h = 0;h<views.length;h++){
+                    views[h].style.display = 'none';
+                }
+                views[this.index].style.display = 'block';
+                //
+                // editor.refresh();
+                // editorMark.refresh();
+            }
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>在线代码编辑器--Html/Markdown支持</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/jquery.splitter.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/lib/codemirror.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/theme/github-markdown.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/addon/display/fullscreen.css}">
+    <link th:href="@{/assets/css/vs.min.css}" rel="stylesheet">
+
+    <script th:src="@{/assets/js/jquery.min.js}"></script>
+    <script th:src="@{/assets/js/jquery.splitter.js}"></script>
+    <script th:src="@{/assets/lib/codemirror.js}"></script>
+    <script th:src="@{/assets/mode/javascript/javascript.js}"></script>
+    <script th:src="@{/assets/mode/css/css.js}"></script>
+    <script th:src="@{/assets/mode/xml/xml.js}"></script>
+    <script th:src="@{/assets/mode/markdown/markdown.js}"></script>
+    <script th:src="@{/assets/mode/htmlmixed/htmlmixed.js}"></script>
+    <script th:src="@{/assets/addon/selection/active-line.js}"></script>
+    <script th:src="@{/assets/addon/display/fullscreen.js}"></script>
+    <script th:src="@{/assets/js/emmet.js}"></script>
+    <script th:src="@{/assets/js/marked.min.js}"></script>
+    <script th:src="@{/assets/js/highlight.min.js}"></script>
+
+    <style>
+        * {
+            padding:0;
+            margin:0;
+        }
+        body {
+            font-size: 14px;
+            background: rgb(247, 247, 247);
+        }
+        header {
+            line-height:39px;
+            background: rgb(237, 237, 237);
+            border-bottom: hsl(0, 0%, 75%) solid 1px;
+            text-align: center;
+            height: 39px;
+            position: relative;
+        }
+        .logo {
+            position: absolute;
+            margin-left:10px;
+            background-color: #777;
+            background-image:
+                    linear-gradient(
+                            45deg,
+                            transparent 45%,
+                            hsla(48,20%,90%,1) 45%,
+                            hsla(48,20%,90%,1) 55%,
+                            transparent 0
+                    );
+            background-size: .05em .05em;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            -webkit-text-stroke: 1px #444;
+            font-size: 24px;
+            font-weight: 800;
+        }
+        header .tab {
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 28px;
+            line-height: 28px;
+            margin-top: 5px;
+            background: #fff;
+            height: 28px;
+            overflow: hidden;
+        }
+        header span {
+            display: inline-block;
+            font-size: 14px;
+            text-align: center;
+            width:100px;
+            line-height: 28px;
+            cursor: pointer;
+        }
+        header span.on {
+            background-color: hsl(215, 100%, 96%);
+        }
+        header .tips {
+            position: absolute;
+            right:10px;
+            top:0;
+            text-align: right;
+            color:#aaa;
+            font-size:12px;
+            text-shadow: 1px 1px 1px #fff;
+        }
+        header .contorl a {
+            border: 1px solid rgba(27,31,35,.2);
+            border-radius: .25em;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 12px;
+            line-height: 14px;
+            padding: 4px 8px;
+            position: relative;
+            white-space: nowrap;
+            background-color: #eff3f6;
+            color: #24292e;
+            text-decoration: none;
+        }
+        header .contorl a:hover {
+            background-color: #e6ebf1;
+            border-color: rgba(27,31,35,.35);
+        }
+        .preview {
+            border: none;
+            height: 100%;
+            background: white;
+            overflow-y: auto;
+            box-sizing: border-box;
+            padding:10px;
+            width: 100%;
+        }
+        #preview {
+            padding:0px;
+        }
+        .editbox {
+            height: 100%;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+        .CodeMirror {
+            height:auto;
+            background: rgb(247, 247, 247);
+        }
+        .splitter_panel .vsplitter {
+            width: 1px;
+            background: transparent;
+            border-left:1px solid #ccc;
+            z-index: 8;
+        }
+        .splitter_panel .vsplitter:hover {
+            border-left:1px dashed gray;
+        }
+        .marked{
+            padding: 0.2em;
+            margin: 0;
+            background-color: #eceae6;
+            border-radius: 3px;
+            font-weight: bold;
+            font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="logo">
+        EditOnline
+    </div>
+    <div class="tab">
+        <span class="on">HTML</span><span>教程</span>
+    </div>
+    <div class="tips">Editing, Press F11 to Switch FullScreen</div>
+</header>
+
+<div class="container" id="content">
+    <div class="edit-view">
+        <div class="editbox">
+            <!--html内容-->
+            <textarea id="htmlEdit"><!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="https://cdn.staticfile.org/angular.js/1.4.6/angular.min.js"></script>
+</head>
+<body>
+
+<div ng-app="">
+  <p>名字 : <input type="text" ng-model="name"></p>
+  <h1>Hello {{name}}</h1>
+</div>
+
+</body>
+</html>
+
+
+
+        </textarea>
+            <!--html内容-->
+        </div>
+        <!--Markdown内容-->
+        <div class="editbox" style="display: none;">
+        <textarea id="MarkdownEdit"><h1>AngularJS <span class="color_h1">表达式</span>
+</h1>
+            <hr>
+            <p class="intro">AngularJS 使用 <strong>表达式</strong> 把数据绑定到 HTML。</p>
+            <hr>
+<h2>AngularJS 表达式</h2>
+            <p>AngularJS 表达式写在双大括号内：<strong>{{ expression }}</strong>。</p>
+            <p>AngularJS 表达式把数据绑定到 HTML，这与 <strong>ng-bind</strong> 指令有异曲同工之妙。</p>
+            <p>AngularJS 将在表达式书写的位置"输出"数据。</p>
+            <p><strong>AngularJS 表达式</strong> 很像 <strong>JavaScript
+表达式</strong>：它们可以包含文字、运算符和变量。</p>
+            <p>实例 {{ 5 + 5 }} 或 {{ firstName + " " + lastName }}</p>
+            <h2>AngularJS 实例</h2>
+
+```
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.min.js"></script>
+</head>
+<body>
+
+<div ng-app="">
+     <p>我的第一个表达式: {{ 5 + 5 }}</p>
+</div>
+
+</body>
+</html>
+```
+<h2>AngularJS 数字</h2>
+<p>AngularJS 数字就像 JavaScript 数字：</p>
+
+```
+<div ng-app="" ng-init="quantity=1;cost=5"><p>
+总价： {{ quantity * cost }}</p></div>
+```
+<p>使用 ng-bind 的相同实例：</p>
+
+```
+<div ng-app="" ng-init="quantity=1;cost=5">
+
+<p>总价： <span ng-bind="quantity * cost"></span></p>
+
+</div>
+```
+<table class="lamp"><tbody><tr>
+<th style="width:50px"><img src="lamp.jpg" alt="Note" style="height:32px;width:32px"></th>
+<td>
+使用 <strong>ng-init</strong> 不是很常见。您将在控制器一章中学习到一个更好的初始化数据的方式。</td>
+</tr></tbody></table>
+            <h2>AngularJS 字符串</h2>
+            <p>AngularJS 字符串就像 JavaScript 字符串：</p>
+
+```
+<div ng-app="" ng-init="firstName='John';lastName='Doe'">
+
+<p>姓名： {{ firstName + " " + lastName }}</p>
+
+</div>
+```
+<h2>AngularJS 对象</h2>
+<p>AngularJS 对象就像 JavaScript 对象：</p>
+
+```
+<div ng-app="" ng-init="person={firstName:'John',lastName:'Doe'}">
+
+<p>姓为 {{ person.lastName }}</p>
+
+</div>
+```
+<h2>AngularJS 数组</h2>
+<p>AngularJS 数组就像 JavaScript 数组：</p>
+
+```
+<div ng-app="" ng-init="points=[1,15,19,2,40]">
+
+<p>第三个值为 {{ points[2] }}</p>
+
+</div>
+```
+<h2>AngularJS 表达式 与 JavaScript 表达式</h2>
+            <p>类似于 JavaScript 表达式，AngularJS 表达式可以包含字母，操作符，变量。 </p>
+            <p>类似于 JavaScript 表达式，AngularJS 表达式可以包含字母，操作符，变量。 </p>
+            <p>类似于 JavaScript 表达式，AngularJS 表达式可以包含字母，操作符，变量。 </p>
+            <p>与 JavaScript 表达式不同，AngularJS 表达式支持过滤器。</p>
+            <h1>AngularJS <span class="color_h1">指令</span>
+</h1>
+            <hr>
+            <p class="intro">AngularJS 通过被称为 <strong>指令</strong> 的新属性来扩展 HTML。</p>
+            <p class="intro">
+AngularJS 通过内置的指令来为应用添加功能。</p>
+            <p class="intro">AngularJS 允许你自定义指令。</p>
+            <hr>
+            <h2>AngularJS 指令</h2>
+            <p>AngularJS 指令是扩展的 HTML 属性，带有前缀 <strong>ng-</strong>。</p>
+            <p><strong>ng-app</strong> 指令初始化一个 AngularJS 应用程序。</p>
+            <p><strong>ng-init</strong> 指令初始化应用程序数据。</p>
+            <p><strong>ng-model</strong> 指令把元素值（比如输入域的值）绑定到应用程序。</p>
+            <h3>尝试一下:</h3>
+
+```
+<div ng-app="" ng-init="firstName='John'">
+
+     <p>在输入框中尝试输入：</p>
+     <p>姓名：<input type="text" ng-model="firstName"></p>
+     <p>你输入的为： {{ firstName }}</p>
+
+</div>
+```
+<p><strong>ng-app</strong> 指令告诉 AngularJS，div 元素是 AngularJS <strong>应用程序</strong> 的"所有者"。</p>
+       <h2>数据绑定</h2>
+            <p>上面实例中的 <strong>{{ firstName }}</strong> 表达式是一个 AngularJS 数据绑定表达式。</p>
+<p>AngularJS 中的数据绑定，同步了 AngularJS 表达式与 AngularJS 数据。</p>
+            <p><strong>{{ firstName }}</strong> 是通过 <strong>ng-model="firstName"</strong> 进行同步。</p>
+            <p>在下一个实例中，两个文本域是通过两个 ng-model 指令同步的：</p>
+              <h3>尝试一下:</h3>
+
+```
+<div ng-app="" ng-init="quantity=1;price=5">
+
+<h2>价格计算器</h2>
+
+数量： <input type="number"    ng-model="quantity">
+价格： <input type="number" ng-model="price">
+
+<p><b>总价：</b> {{ quantity * price }}</p>
+
+</div>
+```
+<h2>重复 HTML 元素</h2>
+            <h3>尝试一下:</h3>
+
+```
+<div ng-app="" ng-init="names=[
+{name:'Jani',country:'Norway'},
+{name:'Hege',country:'Sweden'},
+{name:'Kai',country:'Denmark'}]">
+
+<p>循环对象：</p>
+<ul>
+  <li ng-repeat="x    in names">
+    {{ x.name + ', ' + x.country }}
+  </li>
+</ul>
+
+</div>
+```
+<table class="lamp"><tbody><tr>
+<th style="width:54px"><img src="lamp.jpg" alt="Note" style="height:32px;width:32px"></th>
+<td>AngularJS 完美支持数据库的 CRUD（增加Create、读取Read、更新Update、删除Delete）应用程序。<br>
+把实例中的对象想象成数据库中的记录。</td>
+</tr></tbody></table>
+
+        <h1>
+            <a href="https://www.runoob.com/angularjs/angularjs-directives.html">查看更多教程</a>
+          </h1>
+        </textarea>
+
+            <!--Markdown内容-->
+        </div>
+    </div>
+    <div class="result-view">
+        <iframe id="preview" class="preview"></iframe>
+        <div id="mkview" class="preview markdown-body" style="display: none;"></div>
+    </div>
+</div>
+
+
+<script>
+    let cHeight = document.documentElement.clientHeight - 40;
+    let splitter = $('#content').height(cHeight).split({
+        orientation: 'vertical',
+        limit: 100,
+        position: '30%'
+    });
+
+
+    var night = false;
+    var dom = document.getElementById('preview');
+    var editor = CodeMirror.fromTextArea(document.getElementById("htmlEdit"), {
+        lineNumbers: true,
+        mode: "htmlmixed",
+        indentUnit: 2,
+        lineWrapping:true,
+        styleActiveLine: true
+    });
+
+    // emmetCodeMirror(editor);
+
+    editor.on("keyup", function() {
+        runPreview()
+    });
+
+    var editorMark = CodeMirror.fromTextArea(document.getElementById("MarkdownEdit"), {
+        lineNumbers: false,
+        mode: "markdown",
+        indentUnit: 2,
+        lineWrapping:true,
+        styleActiveLine: true
+    });
+
+    editorMark.on("keyup", function() {
+        runMkview()
+    });
+
+    editor.setOption("extraKeys", {
+        "F11": function(cm) {
+            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+        },
+        "Esc": function(cm) {
+            if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+        }
+    });
+
+    editorMark.setOption("extraKeys", {
+        "F11": function(cm) {
+            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+        },
+        "Esc": function(cm) {
+            if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+        }
+    });
+
+    runPreview();
+    runMkview();
+    tab();
+
+    marked.setOptions({
+        highlight: function (code, lang) {
+            return hljs.highlightAuto(code).value;
+        }
+    });
+
+    function runPreview(){
+        dom.contentWindow.document.open();
+        dom.contentWindow.document.write(editor.getValue());
+        dom.contentWindow.document.close();
+    }
+
+    function runMkview(){
+        document.getElementById('mkview').innerHTML = marked(editorMark.getValue());
+    }
+
+    function tab(){
+        var head = document.getElementsByTagName('header');
+        var btns = head[0].getElementsByTagName('span');
+        var boxs = document.getElementsByClassName('editbox');
+        var views = document.getElementsByClassName('preview');
+        for(var i=0;i<btns.length;i++){
+            var btn = btns[i];
+            btn.index = i;
+            btn.onclick = function(){
+                for(var j=0;j<btns.length;j++){
+                    btns[j].className = '';
+                }
+                this.className = 'on';
+                for(var k = 0;k<boxs.length;k++){
+                    boxs[k].style.display = 'none';
+                }
+                boxs[this.index].style.display = 'block';
+                for(var h = 0;h<views.length;h++){
+                    views[h].style.display = 'none';
+                }
+                views[this.index].style.display = 'block';
+                //
+                // editor.refresh();
+                // editorMark.refresh();
+            }
+        }
+    }
+</script>
+</body>
+</html>

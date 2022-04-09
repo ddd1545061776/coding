@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <title>Coding Online 题库</title>
+<!--    <meta content="Responsive admin theme build on top of Bootstrap 4" name="description" />-->
+<!--    <meta content="Themesdesign" name="author" />-->
+    <link rel="shortcut icon" th:href="@{/assets/images/favicon.ico}">
+
+    <link th:href="@{/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css}" rel="stylesheet">
+
+    <!-- DataTables -->
+    <link th:href="@{/plugins/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet" type="text/css" />
+    <link th:href="@{/plugins/datatables/buttons.bootstrap4.min.css}" rel="stylesheet" type="text/css" />
+
+    <!-- Responsive datatable examples -->
+    <link th:href="@{/plugins/datatables/responsive.bootstrap4.min.css}" rel="stylesheet" type="text/css" />
+
+    <link th:href="@{/assets/css/bootstrap.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/assets/css/metismenu.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/assets/css/icons.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/assets/css/style.css}" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<div th:replace="common/common-section :: common_head"></div>
+<!-- header-bg -->
+
+<div class="wrapper">
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="mt-0 header-title">题库列表</h4>
+
+                        <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>标题</th>
+                                <th>难度</th>
+                                <th>提交次数</th>
+                                <th>通过率</th>
+                                <th>评论</th>>
+                                <th>去做题</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <tr th:each="question : ${questionList}">
+                                <td th:text="${question.questionOrder}"></td>
+                                <td th:text="${question.title}"></td>
+                                <td th:text="${question.questionDifficulty}"></td>
+                                <td th:text="${question.questionSubmit}">
+                                <td th:text="${question.questionSubmit == 0}?0: ${question.getPassRate()*100 + '%'}"></td>
+                                <td>
+                                    <button id="to-comments" type="button" class="btn btn-outline-success waves-effect waves-light">评论</button>
+                                </td>
+                                <td>
+                                    <button id="to-question" type="button" class="btn btn-outline-success waves-effect waves-light">去做题</button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+
+    </div>
+    <!-- end container-fluid -->
+</div>
+<!-- end wrapper -->
+
+<!-- Footer -->
+<div th:replace="common/common-section :: common_footer"></div>
+<!-- End Footer -->
+
+<!-- Required datatable js -->
+<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+<script th:src="@{/plugins/datatables/dataTables.bootstrap4.min.js}"></script>
+<!-- Buttons examples -->
+<script th:src="@{/plugins/datatables/dataTables.buttons.min.js}"></script>
+<script th:src="@{/plugins/datatables/buttons.bootstrap4.min.js}"></script>
+<script th:src="@{/plugins/datatables/jszip.min.js}"></script>
+<script th:src="@{/plugins/datatables/pdfmake.min.js}"></script>
+<script th:src="@{/plugins/datatables/vfs_fonts.js}"></script>
+<script th:src="@{/plugins/datatables/buttons.html5.min.js}"></script>
+<script th:src="@{/plugins/datatables/buttons.print.min.js}"></script>
+<script th:src="@{/plugins/datatables/buttons.colVis.min.js}"></script>
+<!-- Responsive examples -->
+<script th:src="@{/plugins/datatables/dataTables.responsive.min.js}"></script>
+<script th:src="@{/plugins/datatables/responsive.bootstrap4.min.js}"></script>
+
+<!-- Datatable init js -->
+<script th:src="@{/assets/pages/datatables.init.js}"></script>
+
+</body>
+
+</html>

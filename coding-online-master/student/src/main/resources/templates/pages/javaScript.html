@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>在线代码编辑器--Html/Markdown支持</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/jquery.splitter.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/lib/codemirror.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/theme/github-markdown.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/addon/display/fullscreen.css}">
+    <link th:href="@{/assets/css/vs.min.css}" rel="stylesheet">
+
+    <script th:src="@{/assets/js/jquery.min.js}"></script>
+    <script th:src="@{/assets/js/jquery.splitter.js}"></script>
+    <script th:src="@{/assets/lib/codemirror.js}"></script>
+    <script th:src="@{/assets/mode/javascript/javascript.js}"></script>
+    <script th:src="@{/assets/mode/css/css.js}"></script>
+    <script th:src="@{/assets/mode/xml/xml.js}"></script>
+    <script th:src="@{/assets/mode/markdown/markdown.js}"></script>
+    <script th:src="@{/assets/mode/htmlmixed/htmlmixed.js}"></script>
+    <script th:src="@{/assets/addon/selection/active-line.js}"></script>
+    <script th:src="@{/assets/addon/display/fullscreen.js}"></script>
+    <script th:src="@{/assets/js/emmet.js}"></script>
+    <script th:src="@{/assets/js/marked.min.js}"></script>
+    <script th:src="@{/assets/js/highlight.min.js}"></script>
+
+    <style>
+        * {
+            padding:0;
+            margin:0;
+        }
+        body {
+            font-size: 14px;
+            background: rgb(247, 247, 247);
+        }
+        header {
+            line-height:39px;
+            background: rgb(237, 237, 237);
+            border-bottom: hsl(0, 0%, 75%) solid 1px;
+            text-align: center;
+            height: 39px;
+            position: relative;
+        }
+        .logo {
+            position: absolute;
+            margin-left:10px;
+            background-color: #777;
+            background-image:
+                    linear-gradient(
+                            45deg,
+                            transparent 45%,
+                            hsla(48,20%,90%,1) 45%,
+                            hsla(48,20%,90%,1) 55%,
+                            transparent 0
+                    );
+            background-size: .05em .05em;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            -webkit-text-stroke: 1px #444;
+            font-size: 24px;
+            font-weight: 800;
+        }
+        header .tab {
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 28px;
+            line-height: 28px;
+            margin-top: 5px;
+            background: #fff;
+            height: 28px;
+            overflow: hidden;
+        }
+        header span {
+            display: inline-block;
+            font-size: 14px;
+            text-align: center;
+            width:100px;
+            line-height: 28px;
+            cursor: pointer;
+        }
+        header span.on {
+            background-color: hsl(215, 100%, 96%);
+        }
+        header .tips {
+            position: absolute;
+            right:10px;
+            top:0;
+            text-align: right;
+            color:#aaa;
+            font-size:12px;
+            text-shadow: 1px 1px 1px #fff;
+        }
+        header .contorl a {
+            border: 1px solid rgba(27,31,35,.2);
+            border-radius: .25em;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 12px;
+            line-height: 14px;
+            padding: 4px 8px;
+            position: relative;
+            white-space: nowrap;
+            background-color: #eff3f6;
+            color: #24292e;
+            text-decoration: none;
+        }
+        header .contorl a:hover {
+            background-color: #e6ebf1;
+            border-color: rgba(27,31,35,.35);
+        }
+        .preview {
+            border: none;
+            height: 100%;
+            background: white;
+            overflow-y: auto;
+            box-sizing: border-box;
+            padding:10px;
+            width: 100%;
+        }
+        #preview {
+            padding:0px;
+        }
+        .editbox {
+            height: 100%;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+        .CodeMirror {
+            height:auto;
+            background: rgb(247, 247, 247);
+        }
+        .splitter_panel .vsplitter {
+            width: 1px;
+            background: transparent;
+            border-left:1px solid #ccc;
+            z-index: 8;
+        }
+        .splitter_panel .vsplitter:hover {
+            border-left:1px dashed gray;
+        }
+        .marked{
+            padding: 0.2em;
+            margin: 0;
+            background-color: #eceae6;
+            border-radius: 3px;
+            font-weight: bold;
+            font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="logo">
+        EditOnline
+    </div>
+    <div class="tab">
+        <span class="on">HTML</span><span>教程</span>
+    </div>
+    <div class="tips">Editing, Press F11 to Switch FullScreen</div>
+</header>
+
+<div class="container" id="content">
+    <div class="edit-view">
+        <div class="editbox">
+            <!--html内容-->
+            <textarea id="htmlEdit">
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>菜鸟教程(runoob.com)</title>
+<script>
+function displayDate(){
+    document.getElementById("demo").innerHTML=Date();
+}
+</script>
+</head>
+<body>
+
+<h1>我的第一个 JavaScript 程序</h1>
+<p id="demo">这是一个段落</p>
+
+<button type="button" onclick="displayDate()">显示日期</button>
+
+</body>
+</html>
+
+
+
+        </textarea>
+            <!--html内容-->
+        </div>
+        <!--Markdown内容-->
+        <div class="editbox" style="display: none;">
+        <textarea id="MarkdownEdit"><h1>JavaScript <span class="color_h1">教程</span>
+</h1>
+            <div class="tutintro">
+<p>JavaScript 是 Web 的编程语言。</p>
+<p>所有现代的 HTML 页面都使用 JavaScript。</p>
+	<p>JavaScript 非常容易学。</p>
+	<p>本教程将教你学习从初级到高级 JavaScript 知识。</p>
+</div>
+<h2 class="tutheader">为什么学习 JavaScript?</h2>
+            <p>JavaScript 是 web 开发人员必须学习的 3 门语言中的一门：</p>
+            <ol>
+	<li><strong>HTML</strong> 定义了网页的内容</li>
+	<li><strong>CSS</strong> 描述了网页的布局</li>
+	<li><strong>JavaScript</strong> 控制了网页的行为</li>
+</ol>
+            <p>本教程是关于 JavaScript 及介绍 JavaScript 如何与 HTML 和 CSS 一起工作。</p>
+            <br>
+            <h2 class="tutheader">谁适合阅读本教程?</h2>
+            <p>1. 如果您想学习 JavaScript，您可以学习本教程：</p>
+            <p>了解 JavaScript 是如何与 HTML 和 CSS 一起工作的。</p>
+            <p>2. 如果在此之前您已经使用过 JavaScript，您也可以阅读本教程：</p>
+            <p>JavaScript 一直在升级，所以我们需要时刻了解 JavaScript 的新技术。</p>
+            <br>
+            <h2 class="tutheader">阅读本教程前，您需要了解的知识：</h2>
+            <p>阅读本教程，您需要有以下基础：</p>
+            <ul>
+<ul>
+<li><a href="index1.html" rel="noopener noreferrer" target="_blank">HTML 教程</a></li>
+<li><a href="css.html" rel="noopener noreferrer" target="_blank">CSS 教程</a></li>
+</ul>
+</ul>
+            <h1>JavaScript <span class="color_h1">简介</span>
+</h1>
+            <hr>
+            <p class="intro">JavaScript 是互联网上最流行的脚本语言，这门语言可用于 HTML 和 web，更可广泛用于服务器、PC、笔记本电脑、平板电脑和智能手机等设备。</p>
+            <hr>
+            <h2>JavaScript 是脚本语言</h2>
+            <p>JavaScript 是一种轻量级的编程语言。</p>
+            <p>JavaScript 是可插入 HTML 页面的编程代码。</p>
+            <p>JavaScript 插入 HTML 页面后，可由所有的现代浏览器执行。</p>
+            <p>JavaScript 很容易学习。</p>
+            <hr>
+            <h1>JavaScript <span class="color_h1">用法</span></h1>
+            <h2>script标签</h2>
+
+```
+如需在 HTML 页面中插入 JavaScript，请使用 <script> 标签。
+
+<script> 和 </script> 会告诉 JavaScript 在何处开始和结束。
+
+<script> 和 </script> 之间的代码行包含了 JavaScript:
+```
+
+```
+HTML 中的脚本必须位于 <script> 与 </script> 标签之间。
+
+脚本可被放置在 HTML 页面的 <body> 和 <head> 部分中。
+```
+
+```
+<script>
+alert("我的第一个 JavaScript");
+</script>
+
+```
+
+<h2>JavaScript 函数和事件</h2>
+            <p>上面例子中的 JavaScript 语句，会在页面加载时执行。</p>
+            <p>通常，我们需要在某个事件发生时执行代码，比如当用户点击按钮时。</p>
+            <p>如果我们把 JavaScript 代码放入函数中，就可以在事件发生时调用该函数。</p>
+            <p>您将在稍后的章节学到更多有关 JavaScript 函数和事件的知识。</p>
+            <hr>
+            <h2>在 head 或者 body 的JavaScript </h2>
+            <p>您可以在 HTML 文档中放入不限数量的脚本。</p>
+            <p>脚本可位于 HTML 的body 或 head 部分中，或者同时存在于两个部分中。</p>
+            <p>通常的做法是把函数放入 head 部分中，或者放在页面底部。这样就可以把它们安置到同一处位置，不会干扰页面的内容。</p>
+            <h1>JavaScript <span class="color_h1">输出</span></h1>
+            <hr>
+            <p class="intro">JavaScript 没有任何打印或者输出的函数。</p>
+            <h2>JavaScript 显示数据</h2>
+            <p>JavaScript 可以通过不同的方式来输出数据：</p>
+            <ul>
+ <li>使用 <strong>window.alert()</strong> 弹出警告框。</li>
+ <li>使用  <strong>document.write()</strong> 方法将内容写到 HTML 文档中。</li>
+ <li>使用 <strong>innerHTML</strong> 写入到 HTML 元素。</li>
+ <li>使用 <strong>console.log()</strong> 写入到浏览器的控制台。</li>
+</ul>
+            <hr>
+            <h2>使用 window.alert()</h2>
+            <p>你可以弹出警告框来显示数据：</p>
+            <h3>实例</h3>
+
+ ```
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>我的第一个页面</h1>
+<p>我的第一个段落。</p>
+
+<script>
+window.alert(5 + 6);
+</script>
+
+</body>
+</html>
+ ```
+<h2>操作 HTML 元素</h2>
+<p>如需从 JavaScript 访问某个 HTML 元素，您可以使用 document.getElementById(<i>id</i>) 方法。 </p>
+<p>请使用 "id" 属性来标识 HTML 元素，并 innerHTML 来获取或插入元素内容：</p>
+<h2 class="example">实例</h2>
+
+```
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>我的第一个 Web 页面</h1>
+
+<p id="demo">我的第一个段落</p>
+
+<script>
+    document.getElementById("demo").innerHTML = "段落已修改。";
+</script>
+
+</body>
+</html>
+```
+<p>以上 JavaScript 语句（在 script 标签中）可以在 web 浏览器中执行：</p>
+<p><strong>document.getElementById("demo")</strong>  是使用 id 属性来查找 HTML 元素的 JavaScript 代码 。</p>
+<p><strong>innerHTML = "段落已修改。"</strong> 是用于修改元素的 HTML 内容(innerHTML)的
+    JavaScript 代码。 </p>
+<h2>写到 HTML 文档</h2>
+<p>出于测试目的，您可以将JavaScript直接写在HTML 文档中：</p>
+
+```
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>我的第一个 Web 页面</h1>
+
+<p>我的第一个段落。</p>
+
+<script>
+    document.write(Date());
+</script>
+
+</body>
+</html>
+```
+<table class="lamp"><tbody><tr>
+    <th style="width:50px"><img src="lamp.jpg" alt="Note" style="height:32px;width:32px"></th>
+    <td>
+        <p>请使用 document.write() 仅仅向文档输出写内容。 </p>
+        <p>如果在文档已完成加载后执行 document.write，整个 HTML 页面将被覆盖。</p>
+    </td>
+</tr></tbody></table>
+<h2 class="example">实例</h2>
+
+```
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>我的第一个 Web 页面</h1>
+
+<p>我的第一个段落。</p>
+
+<button onclick="myFunction()">点我</button>
+
+<script>
+    function myFunction() {
+        document.write(Date());
+    }
+</script>
+
+</body>
+</html>
+```
+<h2>写到控制台</h2>
+<p>如果您的浏览器支持调试，你可以使用 <strong>console.log()</strong>方法在浏览器中显示 JavaScript 值。 </p>
+<p>浏览器中使用 F12 来启用调试模式， 在调试窗口中点击 "Console" 菜单。</p>
+
+```
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>我的第一个 Web 页面</h1>
+
+<script>
+    a = 5;
+    b = 6;
+    c = a + b;
+    console.log(c);
+</script>
+
+</body>
+</html>
+```
+<h1>
+    <a href="https://www.runoob.com/js/js-tutorial.html">查看更多教程</a>
+</h1>
+        </textarea>
+            <!--Markdown内容-->
+        </div>
+    </div>
+    <div class="result-view">
+        <iframe id="preview" class="preview"></iframe>
+        <div id="mkview" class="preview markdown-body" style="display: none;"></div>
+    </div>
+</div>
+
+
+<script>
+    let cHeight = document.documentElement.clientHeight - 40;
+    let splitter = $('#content').height(cHeight).split({
+        orientation: 'vertical',
+        limit: 100,
+        position: '30%'
+    });
+
+
+    var night = false;
+    var dom = document.getElementById('preview');
+    var editor = CodeMirror.fromTextArea(document.getElementById("htmlEdit"), {
+        lineNumbers: true,
+        mode: "htmlmixed",
+        indentUnit: 2,
+        lineWrapping:true,
+        styleActiveLine: true
+    });
+
+    // emmetCodeMirror(editor);
+
+    editor.on("keyup", function() {
+        runPreview()
+    });
+
+    var editorMark = CodeMirror.fromTextArea(document.getElementById("MarkdownEdit"), {
+        lineNumbers: false,
+        mode: "markdown",
+        indentUnit: 2,
+        lineWrapping:true,
+        styleActiveLine: true
+    });
+
+    editorMark.on("keyup", function() {
+        runMkview()
+    });
+
+    editor.setOption("extraKeys", {
+        "F11": function(cm) {
+            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+        },
+        "Esc": function(cm) {
+            if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+        }
+    });
+
+    editorMark.setOption("extraKeys", {
+        "F11": function(cm) {
+            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+        },
+        "Esc": function(cm) {
+            if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+        }
+    });
+
+    runPreview();
+    runMkview();
+    tab();
+
+    marked.setOptions({
+        highlight: function (code, lang) {
+            return hljs.highlightAuto(code).value;
+        }
+    });
+
+    function runPreview(){
+        dom.contentWindow.document.open();
+        dom.contentWindow.document.write(editor.getValue());
+        dom.contentWindow.document.close();
+    }
+
+    function runMkview(){
+        document.getElementById('mkview').innerHTML = marked(editorMark.getValue());
+    }
+
+    function tab(){
+        var head = document.getElementsByTagName('header');
+        var btns = head[0].getElementsByTagName('span');
+        var boxs = document.getElementsByClassName('editbox');
+        var views = document.getElementsByClassName('preview');
+        for(var i=0;i<btns.length;i++){
+            var btn = btns[i];
+            btn.index = i;
+            btn.onclick = function(){
+                for(var j=0;j<btns.length;j++){
+                    btns[j].className = '';
+                }
+                this.className = 'on';
+                for(var k = 0;k<boxs.length;k++){
+                    boxs[k].style.display = 'none';
+                }
+                boxs[this.index].style.display = 'block';
+                for(var h = 0;h<views.length;h++){
+                    views[h].style.display = 'none';
+                }
+                views[this.index].style.display = 'block';
+                //
+                // editor.refresh();
+                // editorMark.refresh();
+            }
+        }
+    }
+</script>
+</body>
+</html>

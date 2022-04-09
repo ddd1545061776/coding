@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>在线代码编辑器--Html/Markdown支持</title>
+  <meta charset="utf-8"/>
+  <link rel="stylesheet" type="text/css" th:href="@{/assets/css/jquery.splitter.css}"/>
+  <link rel="stylesheet" type="text/css" th:href="@{/assets/lib/codemirror.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/assets/theme/github-markdown.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/assets/addon/display/fullscreen.css}">
+  <link th:href="@{/assets/css/vs.min.css}" rel="stylesheet">
+
+  <script th:src="@{/assets/js/jquery.min.js}"></script>
+  <script th:src="@{/assets/js/jquery.splitter.js}"></script>
+  <script th:src="@{/assets/lib/codemirror.js}"></script>
+  <script th:src="@{/assets/mode/javascript/javascript.js}"></script>
+  <script th:src="@{/assets/mode/css/css.js}"></script>
+  <script th:src="@{/assets/mode/xml/xml.js}"></script>
+  <script th:src="@{/assets/mode/markdown/markdown.js}"></script>
+  <script th:src="@{/assets/mode/htmlmixed/htmlmixed.js}"></script>
+  <script th:src="@{/assets/addon/selection/active-line.js}"></script>
+  <script th:src="@{/assets/addon/display/fullscreen.js}"></script>
+  <script th:src="@{/assets/js/emmet.js}"></script>
+  <script th:src="@{/assets/js/marked.min.js}"></script>
+  <script th:src="@{/assets/js/highlight.min.js}"></script>
+
+  <style>
+    * {
+      padding:0;
+      margin:0;
+    }
+    body {
+      font-size: 14px;
+      background: rgb(247, 247, 247);
+    }
+    header {
+      line-height:39px;
+      background: rgb(237, 237, 237);
+      border-bottom: hsl(0, 0%, 75%) solid 1px;
+      text-align: center;
+      height: 39px;
+      position: relative;
+    }
+    .logo {
+      position: absolute;
+      margin-left:10px;
+      background-color: #777;
+      background-image:
+        linear-gradient(
+          45deg,
+          transparent 45%,
+          hsla(48,20%,90%,1) 45%,
+          hsla(48,20%,90%,1) 55%,
+          transparent 0
+          );
+      background-size: .05em .05em;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      -webkit-text-stroke: 1px #444;
+      font-size: 24px;
+      font-weight: 800;
+    }
+    header .tab {
+      display: inline-block;
+      border: 1px solid #ccc;
+      border-radius: 28px;
+      line-height: 28px;
+      margin-top: 5px;
+      background: #fff;
+      height: 28px;
+      overflow: hidden;
+    }
+    header span {
+      display: inline-block;
+      font-size: 14px;
+      text-align: center;
+      width:100px;
+      line-height: 28px;
+      cursor: pointer;
+    }
+    header span.on {
+      background-color: hsl(215, 100%, 96%);
+    }
+    header .tips {
+      position: absolute;
+      right:10px;
+      top:0;
+      text-align: right;
+      color:#aaa;
+      font-size:12px;
+      text-shadow: 1px 1px 1px #fff;
+    }
+    header .contorl a {
+      border: 1px solid rgba(27,31,35,.2);
+      border-radius: .25em;
+      cursor: pointer;
+      display: inline-block;
+      font-size: 12px;
+      line-height: 14px;
+      padding: 4px 8px;
+      position: relative;
+      white-space: nowrap;
+      background-color: #eff3f6;
+      color: #24292e;
+      text-decoration: none;
+    }
+    header .contorl a:hover {
+      background-color: #e6ebf1;
+      border-color: rgba(27,31,35,.35);
+    }
+    .preview {
+      border: none;
+      height: 100%;
+      background: white;
+      overflow-y: auto;
+      box-sizing: border-box;
+      padding:10px;
+      width: 100%;
+    }
+    #preview {
+      padding:0px;
+    }
+    .editbox {
+      height: 100%;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+    .CodeMirror {
+      height:auto;
+      background: rgb(247, 247, 247);
+    }
+    .splitter_panel .vsplitter {
+      width: 1px;
+      background: transparent;
+      border-left:1px solid #ccc;
+      z-index: 8;
+    }
+    .splitter_panel .vsplitter:hover {
+      border-left:1px dashed gray;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      EditOnline
+    </div>
+    <div class="tab">
+      <span class="on" id="html">HTML</span><span id="jc">教程</span>
+    </div>
+    <div class="tips">Editing, Press F11 to Switch FullScreen</div>
+  </header>
+  
+  <div class="container" id="content">
+    <div class="edit-view">
+      <div class="editbox">
+          <!--html内容-->
+        <textarea id="htmlEdit">
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>菜鸟教程(runoob.com)</title>
+</head>
+<body>
+    <h1>我的第一个标题</h1>
+    <p>我的第一个段落。</p>
+</body>
+</html>
+        </textarea>
+          <!--html内容-->
+      </div>
+     <!--Markdown内容-->
+      <div class="editbox" style="display: none;">
+        <textarea id="MarkdownEdit"><h1>HTML 教程- (HTML5 标准)</h1>
+          超文本标记语言（英语：HyperText Markup Language，简称：HTML）是一种用于创建网页的标准标记语言。
+您可以使用 HTML 来建立自己的 WEB 站点，HTML 运行在浏览器上，由浏览器来解析。
+在本教程中，您将学习如何使用 HTML 来创建站点。
+HTML 很容易学习！相信您能很快学会它！
+          <h1>HTML文档的后缀名</h1>
+          .html
+          .htm
+          <h1>实例解析</h1>
+          <img src="02A7DD95-22B4-4FB9-B994-DDB5393F7F03.jpg">
+          <ul>
+            <li>《!DOCTYPE html》 声明为 HTML5 文档</li>
+              <li>《html>》元素是 HTML 页面的根元素</li>
+              <li>《head》 元素包含了文档的元（meta）数据，如 <meta charset="utf-8"> 定义网页编码格式为 utf-8。</li>
+              <li>《title》 元素描述了文档的标题</li>
+              <li>《body》 元素包含了可见的页面内容</li>
+          </ul>
+          <h1>什么是HTML?</h1>
+          HTML 是用来描述网页的一种语言。
+          <ul>
+            <li>HTML 指的是超文本标记语言: HyperText Markup Language</li>
+              <li>HTML 不是一种编程语言，而是一种标记语言</li>
+              <li>标记语言是一套标记标签 (markup tag)</li>
+              <li>HTML 使用标记标签来描述网页</li>
+              <li>HTML 文档包含了HTML 标签及文本内容</li>
+           <li> HTML文档也叫做 web 页面</li>
+          </ul>
+           <h1>HTML 标签</h1>
+           HTML 标记标签通常被称为 HTML 标签 (HTML tag)。
+<li>HTML 标签是由尖括号包围的关键词，比如 《html》</li>
+<li>HTML 标签通常是成对出现的，比如 《b》和 《/b》</li>
+<li>标签对中的第一个标签是开始标签，第二个标签是结束标签</li>
+<li>开始和结束标签也被称为开放标签和闭合标签</li>
+          <h1>Web 浏览器</h1>
+          Web浏览器（如谷歌浏览器，Internet Explorer，Firefox，Safari）是用于读取HTML文件，并将其作为网页显示。
+浏览器并不是直接显示的HTML标签，但可以使用标签来决定如何展现HTML页面的内容给用户：
+         <h1>HTML 网页结构</h1>
+           <img src="html结构.png">
+          <h1>HTML版本</h1>
+          从初期的网络诞生后，已经出现了许多HTML版本:
+          <table class="reference">
+	<tbody><tr>
+		<th>版本</th>
+		<th>发布时间</th>
+	</tr>
+	<tr>
+		<td>HTML</td>
+		<td>1991</td>
+	</tr>
+	<tr>
+		<td>HTML+</td>
+		<td>1993</td>
+	</tr>
+	<tr>
+		<td>HTML 2.0</td>
+		<td>1995</td>
+	</tr>
+	<tr>
+		<td>HTML 3.2</td>
+		<td>1997</td>
+	</tr>
+	<tr>
+		<td>HTML 4.01</td>
+		<td>1999</td>
+	</tr>
+	<tr>
+		<td>XHTML 1.0</td>
+		<td>2000</td>
+	</tr>
+	<tr>
+		<td>HTML5</td>
+		<td>2012</td>
+	</tr>
+<tr>
+		<td>XHTML5</td>
+		<td>2013</td>
+	</tr>
+
+</tbody></table>
+          <h1>《!DOCTYPE》 声明</h1>
+          《!DOCTYPE》声明有助于浏览器中正确显示网页。
+网络上有很多不同的文件，如果能够正确声明HTML的版本，浏览器就能正确显示网页内容。
+doctype 声明是不区分大小写的，以下方式均可：
+          <ul>
+            <li>《!DOCTYPE html》</li>
+            <li>《!DOCTYPE HTML》</li>
+            <li>《!doctype html》</li>
+            <li>《!Doctype Html》</li>
+          </ul>
+          <h1>
+            <a href="https://www.runoob.com/html/html-tutorial.html">查看更多教程</a>
+          </h1>
+
+        </textarea>
+          <!--Markdown内容-->
+      </div>
+    </div>
+    <div class="result-view">
+      <iframe id="preview" class="preview"></iframe>
+      <div id="mkview" class="preview markdown-body" style="display: none;"></div>
+    </div>
+  </div>
+
+  
+  <script>
+      var cHeight = document.documentElement.clientHeight - 40;
+      var  splitter = $('#content').height(cHeight).split({
+          orientation: 'vertical',
+          limit: 100,
+          position: '30%'
+      });
+
+
+    var night = false;
+    var dom = document.getElementById('preview');
+    var editor = CodeMirror.fromTextArea(document.getElementById("htmlEdit"), {
+      lineNumbers: true,
+      mode: "htmlmixed",
+      indentUnit: 2,
+      lineWrapping:true,
+      styleActiveLine: true
+    });
+
+    // emmetCodeMirror(editor);
+
+    editor.on("keyup", function() {
+      runPreview()
+    });
+
+    var editorMark = CodeMirror.fromTextArea(document.getElementById("MarkdownEdit"), {
+      lineNumbers: false,
+      mode: "markdown",
+      indentUnit: 2,
+      lineWrapping:true,
+      styleActiveLine: true
+    });
+
+    editorMark.on("keyup", function() {
+      runMkview()
+    });
+
+    editor.setOption("extraKeys", {
+        "F11": function(cm) {
+            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+        },
+        "Esc": function(cm) {
+            if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+        }
+    });
+
+    editorMark.setOption("extraKeys", {
+        "F11": function(cm) {
+            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+        },
+        "Esc": function(cm) {
+            if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+        }
+    });
+
+    runPreview();
+    runMkview();
+    tab();
+
+    marked.setOptions({
+      highlight: function (code, lang) {
+        return hljs.highlightAuto(code).value;
+      }
+    });
+
+    function runPreview(){
+      dom.contentWindow.document.open();
+      dom.contentWindow.document.write(editor.getValue());
+      dom.contentWindow.document.close();
+    }
+
+    function runMkview(){
+      document.getElementById('mkview').innerHTML = marked(editorMark.getValue());
+    }
+    function tab(){
+        var head = document.getElementsByTagName('header');
+      var btns = head[0].getElementsByTagName('span');
+      var boxs = document.getElementsByClassName('editbox');
+      var views = document.getElementsByClassName('preview');
+      for(var i=0;i<btns.length;i++){
+          var btn = btns[i];
+        btn.index = i;
+        btn.onclick = function(){
+
+          for(var j=0;j<btns.length;j++){
+              btns[j].className = '';
+          }
+          this.className = 'on';
+          for(var k = 0;k<boxs.length;k++){
+              boxs[k].style.display = 'none';
+          }
+          boxs[this.index].style.display = 'block';
+          for(var h = 0;h<views.length;h++){
+              views[h].style.display = 'none';
+          }
+          views[this.index].style.display = 'block';
+          // editor.refresh();
+          // editorMark.refresh();
+        }
+      }
+    }
+  </script>
+</body>
+</html>

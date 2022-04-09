@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>在线代码编辑器--Html/Markdown支持</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/jquery.splitter.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/lib/codemirror.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/theme/github-markdown.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/addon/display/fullscreen.css}">
+    <link th:href="@{/assets/css/vs.min.css}" rel="stylesheet">
+
+    <script th:src="@{/assets/js/jquery.min.js}"></script>
+    <script th:src="@{/assets/js/jquery.splitter.js}"></script>
+    <script th:src="@{/assets/lib/codemirror.js}"></script>
+    <script th:src="@{/assets/mode/javascript/javascript.js}"></script>
+    <script th:src="@{/assets/mode/css/css.js}"></script>
+    <script th:src="@{/assets/mode/xml/xml.js}"></script>
+    <script th:src="@{/assets/mode/markdown/markdown.js}"></script>
+    <script th:src="@{/assets/mode/htmlmixed/htmlmixed.js}"></script>
+    <script th:src="@{/assets/addon/selection/active-line.js}"></script>
+    <script th:src="@{/assets/addon/display/fullscreen.js}"></script>
+    <script th:src="@{/assets/js/emmet.js}"></script>
+    <script th:src="@{/assets/js/marked.min.js}"></script>
+    <script th:src="@{/assets/js/highlight.min.js}"></script>
+
+    <style>
+        * {
+            padding:0;
+            margin:0;
+        }
+        body {
+            font-size: 14px;
+            background: rgb(247, 247, 247);
+        }
+        header {
+            line-height:39px;
+            background: rgb(237, 237, 237);
+            border-bottom: hsl(0, 0%, 75%) solid 1px;
+            text-align: center;
+            height: 39px;
+            position: relative;
+        }
+        .logo {
+            position: absolute;
+            margin-left:10px;
+            background-color: #777;
+            background-image:
+                    linear-gradient(
+                            45deg,
+                            transparent 45%,
+                            hsla(48,20%,90%,1) 45%,
+                            hsla(48,20%,90%,1) 55%,
+                            transparent 0
+                    );
+            background-size: .05em .05em;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            -webkit-text-stroke: 1px #444;
+            font-size: 24px;
+            font-weight: 800;
+        }
+        header .tab {
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 28px;
+            line-height: 28px;
+            margin-top: 5px;
+            background: #fff;
+            height: 28px;
+            overflow: hidden;
+        }
+        header span {
+            display: inline-block;
+            font-size: 14px;
+            text-align: center;
+            width:100px;
+            line-height: 28px;
+            cursor: pointer;
+        }
+        header span.on {
+            background-color: hsl(215, 100%, 96%);
+        }
+        header .tips {
+            position: absolute;
+            right:10px;
+            top:0;
+            text-align: right;
+            color:#aaa;
+            font-size:12px;
+            text-shadow: 1px 1px 1px #fff;
+        }
+        header .contorl a {
+            border: 1px solid rgba(27,31,35,.2);
+            border-radius: .25em;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 12px;
+            line-height: 14px;
+            padding: 4px 8px;
+            position: relative;
+            white-space: nowrap;
+            background-color: #eff3f6;
+            color: #24292e;
+            text-decoration: none;
+        }
+        header .contorl a:hover {
+            background-color: #e6ebf1;
+            border-color: rgba(27,31,35,.35);
+        }
+        .preview {
+            border: none;
+            height: 100%;
+            background: white;
+            overflow-y: auto;
+            box-sizing: border-box;
+            padding:10px;
+            width: 100%;
+        }
+        #preview {
+            padding:0px;
+        }
+        .editbox {
+            height: 100%;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+        .CodeMirror {
+            height:auto;
+            background: rgb(247, 247, 247);
+        }
+        .splitter_panel .vsplitter {
+            width: 1px;
+            background: transparent;
+            border-left:1px solid #ccc;
+            z-index: 8;
+        }
+        .splitter_panel .vsplitter:hover {
+            border-left:1px dashed gray;
+        }
+        .marked{
+            padding: 0.2em;
+            margin: 0;
+            background-color: #eceae6;
+            border-radius: 3px;
+            font-weight: bold;
+            font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="logo">
+        EditOnline
+    </div>
+    <div class="tab">
+        <span class="on">HTML</span><span>教程</span>
+    </div>
+    <div class="tips">Editing, Press F11 to Switch FullScreen</div>
+</header>
+
+<div class="container" id="content">
+    <div class="edit-view">
+        <div class="editbox">
+            <!--html内容-->
+            <textarea id="htmlEdit"><!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>菜鸟教程(runoob.com)</title>
+<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js">
+</script>
+<script>
+$(document).ready(function(){
+    $("p").click(function(){
+        $(this).hide();
+    });
+});
+</script>
+</head>
+<body>
+<p>如果你点我，我就会消失。</p>
+<p>继续点我!</p>
+<p>接着点我!</p>
+</body>
+</html>
+
+
+
+        </textarea>
+            <!--html内容-->
+        </div>
+        <!--Markdown内容-->
+        <div class="editbox" style="display: none;">
+        <textarea id="MarkdownEdit"><h1>jQuery <span class="color_h1">教程</span>
+</h1>
+            <div class="tutintro">
+<p>jQuery 是一个 JavaScript 库。</p>
+<p>jQuery 极大地简化了 JavaScript 编程。</p>
+<p>jQuery 很容易学习。</p><p>
+</p></div>
+            <h1>jQuery <span class="color_h1">简介</span>
+</h1>
+            <hr>
+            <p class="intro">jQuery 库可以通过一行简单的标记被添加到网页中。</p>
+            <hr>
+            <h2>您需要具备的基础知识</h2>
+            <p>在您开始学习 jQuery 之前，您应该对以下知识有基本的了解：</p>
+            <ul>
+<li>HTML</li>
+	<li>CSS</li>
+	<li>JavaScript</li>
+</ul>
+            <p>如果您需要首先学习这些科目，请在我们的 <a href="https://www.runoob.com/"> 首页 </a>查找这些教程。</p>
+            <hr>
+            <h2>什么是 jQuery ？</h2>
+            <p>jQuery 是一个 JavaScript 函数库。</p>
+            <p>jQuery 是一个轻量级的"写的少，做的多"的 JavaScript 库。</p>
+            <p>jQuery 库包含以下功能：</p><ul>
+<li>HTML 元素选取</li>
+<li>HTML 元素操作</li>
+<li>CSS 操作</li>
+<li>HTML 事件函数</li>
+<li>JavaScript 特效和动画</li>
+<li>HTML DOM 遍历和修改</li>
+<li>AJAX</li>
+<li>Utilities</li>
+</ul>
+            <p><b>提示：</b> 除此之外，jQuery 还提供了大量的插件。</p>
+            <hr>
+            <h2>为什么使用 jQuery ？</h2>
+            <p>目前网络上有大量开源的 JS 代码库, 但是 jQuery 是目前最流行的 JS 代码库，而且提供了大量的扩展。</p>
+            <p>很多大公司都在使用 jQuery， 例如:</p>
+            <ul>
+<li>Google</li>
+	<li>Microsoft</li>
+	<li>IBM</li>
+	<li>Netflix</li>
+</ul>
+<table class="lamp" id="table1"><tbody><tr>
+<th width="50"><img src="lamp.jpg" width="32" height="32" alt="lamp"></th>
+<td>
+<b>jQuery 是否适用于所有浏览器?<br></b><br>jQuery 团体知道 JS 在不同浏览器中存在着大量的兼容性问题，目前 jQuery 兼容于所有主流浏览器, 包括 Internet Explorer 6!</td>
+</tr></tbody></table>
+<h1>jQuery <span class="color_h1">安装</span>
+</h1>
+            <hr>
+            <h2>网页中添加 jQuery</h2>
+            <p>可以通过多种方法在网页中添加 jQuery。 您可以使用以下方法：</p>
+            <ul>
+<li>从 <a target="_blank" href="http://jquery.com/download/" rel="noopener noreferrer">jquery.com</a> 下载 jQuery 库</li>
+	<li>从 CDN 中载入 jQuery, 如从 Google 中加载 jQuery</li>
+</ul>
+            <hr>
+            <h2>下载 jQuery</h2>
+            <p>有两个版本的 jQuery 可供下载：</p>
+            <ul>
+<li>Production version - 用于实际的网站中，已被精简和压缩。</li>
+<li>Development version - 用于测试和开发（未压缩，是可读的代码）</li>
+</ul>
+            <p>以上两个版本都可以从 <a target="_blank" href="http://jquery.com/download/" rel="noopener noreferrer">jquery.com</a> 中下载。</p>
+            <p>jQuery 库是一个 JavaScript 文件，您可以使用 HTML 的 script 标签引用它：</p>
+
+ ```
+<head>
+<script src="jquery-1.10.2.min.js"></script>
+</head>
+ ```
+<p><b>提示：</b> 将下载的文件放在网页的同一目录下，就可以使用jQuery。<br></p>
+            <table class="lamp" id="table2"><tbody><tr>
+<th width="50"><img loading="lazy" src="lamp.jpg" width="32" height="32" alt="lamp"></th>
+<td>
+<b>您是否很疑惑为什么我们没有在 script 标签中使用 type="text/javascript" ？</b><br><br>
+在 HTML5 中，不必那样做了。JavaScript 是 HTML5 以及所有现代浏览器中的默认脚本语言！</td>
+</tr></tbody></table>
+            <br>
+            <hr>
+            <h2>替代方案</h2>
+            <p>如果您不希望下载并存放 jQuery，那么也可以通过 CDN（内容分发网络） 引用它。</p>
+            <p>Staticfile CDN、百度、又拍云、新浪、谷歌和微软的服务器都存有 jQuery 。</p>
+            <p>如果你的站点用户是国内的，建议使用百度、又拍云、新浪等国内CDN地址，如果你站点用户是国外的可以使用谷歌和微软。</p>
+<p>如需从 Staticfile CDN、又拍云、新浪、谷歌或微软引用 jQuery，请使用以下代码之一：</p>
+
+```
+<head>
+<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js">
+</script>
+</head>
+```
+<p>百度 CDN:</p>
+
+```
+<head>
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js">
+</script>
+</head>
+```
+<p>又拍云 CDN:</p>
+
+```
+<head>
+<script src="https://upcdn.b0.upaiyun.com/libs/jquery/jquery-2.0.2.min.js">
+</script>
+</head>
+```
+<p>新浪 CDN:</p>
+
+```
+<head>
+<script src="https://lib.sinaapp.com/js/jquery/2.0.2/jquery-2.0.2.min.js">
+</script>
+</head>
+```
+<p>Google  CDN:</p>
+
+```
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
+</script>
+</head>
+```
+<table class="lamp"><tbody><tr>
+<th width="50"><img loading="lazy" src="lamp.jpg" width="32" height="32" alt="lamp"></th>
+<td>
+
+不大推荐使用Google CDN来获取版本，因为Google产品在中国很不稳定。</td>
+</tr></tbody></table>
+<p>Microsoft   CDN:</p>
+
+```
+<head>
+<script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.min.js">
+</script>
+</head>
+```
+<br>
+<table class="lamp"><tbody><tr>
+<th width="50"><img loading="lazy" src="lamp.jpg" width="32" height="32" alt="lamp"></th>
+<td>
+<b>使用 Staticfile CDN、百度、又拍云、新浪、谷歌或微软的 jQuery，有一个很大的优势：</b><br><br>
+许多用户在访问其他站点时，已经从百度、又拍云、新浪、谷歌或微软加载过 jQuery。所以结果是，当他们访问您的站点时，会从缓存中加载 jQuery，这样可以减少加载时间。同时，大多数 CDN 都可以确保当用户向其请求文件时，会从离用户最近的服务器上返回响应，这样也可以提高加载速度。</td>
+</tr></tbody></table>
+            <h1>jQuery <span class="color_h1">语法</span>
+</h1>
+            <hr>
+            <p class="intro">通过 jQuery，您可以选取（查询，query） HTML 元素，并对它们执行"操作"（actions）。</p>
+            <hr>
+            <h2>jQuery 语法</h2>
+            <p>jQuery 语法是通过选取 HTML 元素，并对选取的元素执行某些操作。</p>
+            <p>基础语法： <b>$(<i>selector</i>).<i>action</i>()</b></p>
+            <ul>
+<li>美元符号定义 jQuery</li>
+<li>选择符（selector）"查询"和"查找" HTML 元素</li>
+<li>jQuery 的 action() 执行对元素的操作</li>
+</ul>
+            <p>实例:</p>
+            <ul><li>
+<p>$(this).hide() - 隐藏当前元素</p>
+</li><li>
+<p>$("p").hide() - 隐藏所有 p 元素</p>
+</li><li>
+<p>$("p.test").hide() - 隐藏所有 class="test" 的 p 元素</p>
+</li><li>
+<p>$("#test").hide() - 隐藏 id="test" 的元素</p></li></ul>
+            <table class="lamp"><tbody><tr>
+<th width="50"><img src="lamp.jpg" width="32" height="32" alt="lamp"></th>
+<td>
+<b>你对 CSS 选择器熟悉吗？</b><br><br>
+jQuery 使用的语法是 XPath 与 CSS 选择器语法的组合。在本教程接下来的章节，您将学习到更多有关选择器的语法。</td>
+</tr></tbody></table>
+            <hr>
+            <h2>文档就绪事件</h2>
+            <p>您也许已经注意到在我们的实例中的所有 jQuery 函数位于一个 document ready 函数中：</p>
+
+```
+$(document).ready(function(){
+
+   // 开始写 jQuery 代码...
+
+});
+
+```
+<p>这是为了防止文档在完全加载（就绪）之前运行 jQuery 代码，即在 DOM 加载完成后才可以对 DOM 进行操作。</p>
+<p>如果在文档没有完全加载之前就运行函数，操作可能失败。下面是两个具体的例子：</p>
+            <ul>
+<li>试图隐藏一个不存在的元素</li>
+<li>获得未完全加载的图像的大小</li>
+</ul>
+            <p><b>提示：</b>简洁写法（与以上写法效果相同）:</p>
+
+```
+$(function(){
+
+   // 开始写 jQuery 代码...
+
+});
+```
+<p>以上两种方式你可以选择你喜欢的方式实现文档就绪后执行 jQuery 方法。</p>
+            <h1>
+            <a href="https://www.runoob.com/jquery/jquery-syntax.html">查看更多教程</a>
+          </h1>
+        </textarea>
+
+            <!--Markdown内容-->
+        </div>
+    </div>
+    <div class="result-view">
+        <iframe id="preview" class="preview"></iframe>
+        <div id="mkview" class="preview markdown-body" style="display: none;"></div>
+    </div>
+</div>
+
+
+<script>
+    let cHeight = document.documentElement.clientHeight - 40;
+    let splitter = $('#content').height(cHeight).split({
+        orientation: 'vertical',
+        limit: 100,
+        position: '30%'
+    });
+
+
+    var night = false;
+    var dom = document.getElementById('preview');
+    var editor = CodeMirror.fromTextArea(document.getElementById("htmlEdit"), {
+        lineNumbers: true,
+        mode: "htmlmixed",
+        indentUnit: 2,
+        lineWrapping:true,
+        styleActiveLine: true
+    });
+
+    // emmetCodeMirror(editor);
+
+    editor.on("keyup", function() {
+        runPreview()
+    });
+
+    var editorMark = CodeMirror.fromTextArea(document.getElementById("MarkdownEdit"), {
+        lineNumbers: false,
+        mode: "markdown",
+        indentUnit: 2,
+        lineWrapping:true,
+        styleActiveLine: true
+    });
+
+    editorMark.on("keyup", function() {
+        runMkview()
+    });
+
+    editor.setOption("extraKeys", {
+        "F11": function(cm) {
+            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+        },
+        "Esc": function(cm) {
+            if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+        }
+    });
+
+    editorMark.setOption("extraKeys", {
+        "F11": function(cm) {
+            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+        },
+        "Esc": function(cm) {
+            if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+        }
+    });
+
+    runPreview();
+    runMkview();
+    tab();
+
+    marked.setOptions({
+        highlight: function (code, lang) {
+            return hljs.highlightAuto(code).value;
+        }
+    });
+
+    function runPreview(){
+        dom.contentWindow.document.open();
+        dom.contentWindow.document.write(editor.getValue());
+        dom.contentWindow.document.close();
+    }
+
+    function runMkview(){
+        document.getElementById('mkview').innerHTML = marked(editorMark.getValue());
+    }
+
+    function tab(){
+        var head = document.getElementsByTagName('header');
+        var btns = head[0].getElementsByTagName('span');
+        var boxs = document.getElementsByClassName('editbox');
+        var views = document.getElementsByClassName('preview');
+        for(var i=0;i<btns.length;i++){
+            var btn = btns[i];
+            btn.index = i;
+            btn.onclick = function(){
+                for(var j=0;j<btns.length;j++){
+                    btns[j].className = '';
+                }
+                this.className = 'on';
+                for(var k = 0;k<boxs.length;k++){
+                    boxs[k].style.display = 'none';
+                }
+                boxs[this.index].style.display = 'block';
+                for(var h = 0;h<views.length;h++){
+                    views[h].style.display = 'none';
+                }
+                views[this.index].style.display = 'block';
+                //
+                // editor.refresh();
+                // editorMark.refresh();
+            }
+        }
+    }
+</script>
+</body>
+</html>
